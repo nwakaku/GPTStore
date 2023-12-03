@@ -35,7 +35,7 @@ const GPTCard = ({ item }) => {
   );
 };
 
-const GPTs = () => {
+const CreatedGPTs = () => {
   // Your logic or data fetching for GPT cards
   const gptItems = [
     {
@@ -65,12 +65,23 @@ const GPTs = () => {
   ];
 
   return (
-    <div className="grid grid-cols-3">
-      {gptItems.map((item, index) => (
-        <GPTCard key={index} item={item} />
-      ))}
+    <div className="m-10">
+      <div className="flex justify-between items-center mb-4">
+        <p className="font-bold text-lg text-white">GPTs Created</p>
+        <a href="/dashboard/create">
+          <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full">
+          Create New GPT
+        </button>
+        </a>
+        
+      </div>
+      <div className="grid grid-cols-3">
+        {gptItems.map((item, index) => (
+          <GPTCard key={index} item={item} />
+        ))}
+      </div>
     </div>
   );
 };
 
-export default GPTs;
+export default CreatedGPTs;
