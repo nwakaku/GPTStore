@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+// SPDX-License-Identifier: CC0-1.0
+pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -13,6 +13,7 @@ contract GPTStore is IERC4907, ERC721URIStorage,  ReentrancyGuard {
     struct Assistant {
         string assistantID;
         uint256 pricePerHour;
+        address owner;
     }
 
     struct UserInfo 
@@ -24,7 +25,10 @@ contract GPTStore is IERC4907, ERC721URIStorage,  ReentrancyGuard {
     }
 
     uint256 private nftId = 1;
+    uint256 private assistNo = 1;
     address private devAddress;
+    uint256[] private assistantIds; // Array to store assistant IDs
+
 
     uint256 public minRentalTime = 1800; // 30 mins
     uint256 public maxRentalTime = 2592000; // 30 days
@@ -33,7 +37,9 @@ contract GPTStore is IERC4907, ERC721URIStorage,  ReentrancyGuard {
     mapping(uint256 => Assistant) public assistantsGroups;
     // Mapping to store rented assistants for each user
     mapping(address => uint256[]) private userRentedAssistants;
-    uint256[] private assistantIds; // Array to store assistant IDs
+    // Add a mapping to track whether an NFT has been rented by a user
+    mapping(uint256 => mapping(address => bool)) private hasRented;
+
 
 
     // Event emitted when a user rents an assistant
@@ -46,18 +52,42 @@ contract GPTStore is IERC4907, ERC721URIStorage,  ReentrancyGuard {
         devAddress = msg.sender;
      }
 
-    function setAssistants(uint256 id, string memory serverId, uint256 priceHour) external {
-        assistantsGroups[id] = Assistant(serverId, priceHour);
-        assistantIds.push(id); // Add the assistant ID to the array
+    function setAssistants( string memory assistantId, uint256 priceHour) external {
+        assistantsGroups[assistNo] = Assistant(assistantId, priceHour, msg.sender);
+        assistantIds.push(assistNo); // Add the assistant ID to the array
+        assistNo++;
     }
 
-    function getAssistantIds() external view returns (uint256[] memory) {
-        return assistantIds;
+    function getAllAssistantDetails() external view returns (Assistant[] memory) {
+        Assistant[] memory allAssistants = new Assistant[](assistantIds.length);
+
+        for (uint256 i = 0; i < assistantIds.length; i++) {
+            allAssistants[i] = assistantsGroups[assistantIds[i]];
+        }
+
+        return allAssistants;
     }
 
-    function removeTemplate(uint256 id) external  {
+    function removeTemplate(uint256 id) external {
         delete assistantsGroups[id];
+
+        // Find the index of the id in the assistantIds array
+        uint256 indexToDelete;
+        for (uint256 i = 0; i < assistantIds.length; i++) {
+            if (assistantIds[i] == id) {
+            indexToDelete = i;
+            break;
+        }
     }
+
+    // If the id was found in the assistantIds array, remove it using .pop()
+    if (indexToDelete < assistantIds.length - 1) {
+        assistantIds[indexToDelete] = assistantIds[assistantIds.length - 1];
+    }
+    assistantIds.pop();
+}
+
+
 
     function setMinRentalTime(uint256 time) external  {
         minRentalTime = time;
@@ -94,6 +124,8 @@ contract GPTStore is IERC4907, ERC721URIStorage,  ReentrancyGuard {
     }
 
     function rent(string memory metadata, uint256 assistantNo) external payable nonReentrant {
+        // Check if the user has already rented this NFT
+        require(!hasRented[nftId][msg.sender], "You have already rented this NFT");
         require(assistantsGroups[assistantNo].pricePerHour > 0, "Assistant template not found");
         cleanUpOldRentals();
         uint256 timeRequested = msg.value * 3600 / assistantsGroups[assistantNo].pricePerHour;
@@ -104,7 +136,7 @@ contract GPTStore is IERC4907, ERC721URIStorage,  ReentrancyGuard {
         emit Rent(nftId, msg.sender);
 
         // Transfer the correct payment to the seller
-        payable(devAddress).transfer(msg.value);
+        payable(assistantsGroups[assistantNo].owner).transfer(msg.value);
 
         // Mint the NFT
         _mint(msg.sender, nftId);
@@ -122,6 +154,8 @@ contract GPTStore is IERC4907, ERC721URIStorage,  ReentrancyGuard {
         userRentedAssistants[msg.sender].push(nftId);
 
         nftId++;
+        // Set the hasRented mapping to true for this NFT and user
+        hasRented[nftId][msg.sender] = true;
     }
 
 
@@ -137,7 +171,7 @@ contract GPTStore is IERC4907, ERC721URIStorage,  ReentrancyGuard {
         emit Rent(nftId, msg.sender);
 
         // Transfer the correct payment to the seller
-        payable(devAddress).transfer(msg.value);
+        payable(template.owner).transfer(msg.value);
 
         // Update user information for the extended rental
         user.expires = uint64(user.expires + timeRequested);
@@ -170,8 +204,8 @@ contract GPTStore is IERC4907, ERC721URIStorage,  ReentrancyGuard {
         _burn(tokenId);
     }
 
-    function getUserRentedAssistants(address user) external view returns (UserInfo[] memory) {
-        uint256[] storage rentedIds = userRentedAssistants[user];
+    function getUserRentedAssistants() external view returns (UserInfo[] memory) {
+        uint256[] storage rentedIds = userRentedAssistants[msg.sender];
         UserInfo[] memory rentedAssistants = new UserInfo[](rentedIds.length);
 
         for (uint256 i = 0; i < rentedIds.length; i++) {

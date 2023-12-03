@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { account, contractAbi, contractAddress_ZKEvm, walletClient } from '../utils/config'
+import { wagmiAbi } from './abi';
+
 
 
 const GPTForm = () => {
@@ -6,6 +9,7 @@ const GPTForm = () => {
     url: '',
     match: '',
     maxPagesToCrawl: 0,
+    priceHour: 0
   });
 
   const handleChange = (e) => {
@@ -34,7 +38,15 @@ const GPTForm = () => {
 
       const data3 = await response.json();
 
-      
+      const { request } = await publicClient.simulateContract({
+        address: contractAddress_ZKEvm,
+        abi: contractAbi,
+        functionName: 'setAssistants',
+        args: [data3.id, formData.priceHour],
+        account
+      })
+
+      await walletClient.writeContract(request)
       console.log(data3);
       console.log('Form submitted successfully');
     } catch (error) {
@@ -76,6 +88,18 @@ const GPTForm = () => {
               type="number"
               name="maxPagesToCrawl"
               value={formData.maxPagesToCrawl}
+              onChange={handleChange}
+              className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:border-blue-500 bg-opacity-50"
+              required
+            />
+          </label>
+
+          <label className="block mb-4">
+            <span className="text-lg">Price Per Hour:</span>
+            <input
+              type="number"
+              name="priceHour"
+              value={formData.priceHour}
               onChange={handleChange}
               className="mt-1 p-2 border rounded-md w-full focus:outline-none focus:border-blue-500 bg-opacity-50"
               required
