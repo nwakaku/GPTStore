@@ -55,8 +55,8 @@ app.post('/crawl', async (req, res) => {
 
     // Start the crawling process
     await crawl(config);
-    const jsonFiles = await write(config);
-    await main()
+    await write(config);
+    const jsonFiles = await main();
     res.status(200).json( jsonFiles );
   } catch (error) {
     console.error(error);

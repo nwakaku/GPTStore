@@ -4,7 +4,7 @@ import "@nomicfoundation/hardhat-toolbox";
 const ACCOUNT_PRIVATE_KEY = "2681881ef2ddd24cd569a5e5df1f34ac3f765f37ad7cffce76a9a7ee3c1fe7b8"
 
 const config: HardhatUserConfig = {
-  solidity: "0.8.19",
+  solidity: "0.8.20",
   paths: {
     artifacts: "./src",
 },

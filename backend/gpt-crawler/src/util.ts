@@ -1,10 +1,9 @@
 import fs from "fs";
 import OpenAI from "openai";
 
-const openAIApiKey = "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";
 
 const openai = new OpenAI({
-  apiKey: openAIApiKey
+  apiKey: ''
 });
 
 // const upF = require("../output.json")
@@ -15,6 +14,10 @@ export async function main(): Promise<OpenAI.Beta.Assistants.Assistant> {
     file:  fs.createReadStream("output.json"), // Upload JSON string as file content
     purpose: "assistants",
   });
+
+  // Delete the file after it has been uploaded
+  await fs.promises.unlink("output.json");
+
 
   const myAssistant = await openai.beta.assistants.create({
     instructions:

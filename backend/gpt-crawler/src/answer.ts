@@ -68,6 +68,8 @@ export async function answer(userQuestion : string) {
         console.log("No response received from the assistant.");
       }
 
+    const theMessage = lastMessageForRun ? lastMessageForRun.content : "err";
 
-  return lastMessageForRun
+
+  return theMessage
 }

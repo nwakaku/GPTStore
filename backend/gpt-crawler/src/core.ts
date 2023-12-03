@@ -4,6 +4,7 @@ import { readFile, writeFile } from "fs/promises";
 import { glob } from "glob";
 import { Config } from "./config.js";
 import { Page } from "playwright";
+import { join } from "path"; // Import the 'path' module
 
 
 let pageCounter = 0;
@@ -124,5 +125,10 @@ export async function write(config: Config) {
     results.push(data);
   }
 
-  await writeFile(config.outputFileName, JSON.stringify(results, null, 2));
+  // Get the directory of the current script
+  const scriptDir = "./src";
+  // Construct the output file path in the same directory
+  const outputFilePath = join(scriptDir, config.outputFileName);
+
+  await writeFile(outputFilePath, JSON.stringify(results, null, 2));
 }
