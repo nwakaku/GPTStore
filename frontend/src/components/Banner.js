@@ -1,5 +1,6 @@
 // Banner.js
-import React from 'react';
+import React from "react";
+import Link from "next/link";
 
 const Banner = () => {
   return (
@@ -11,9 +12,12 @@ const Banner = () => {
         <p className="text-lg md:text-xl mb-8">
           Explore the power of AI with GPT technology in the decentralized web.
         </p>
-        <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full">
-          Get Started
-        </button>
+
+        <a href="/marketplace">
+          <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full">
+            Get Started
+          </button>
+        </a>
       </div>
     </div>
   );
