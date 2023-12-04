@@ -1,6 +1,6 @@
 import { createWalletClient, custom } from 'viem';
 import { mainnet, polygonZkEvmTestnet } from 'viem/chains';
-import contractStuff from "../contract/contract.json";
+import contractStuff from "../../contract/contract.json";
 // import { useState, createContext, useContext } from "react";
 
 export const contractAbi = contractStuff;

@@ -5,7 +5,7 @@ import GPTForm from "@/components/GPTForm";
 import React from "react";
 
 
-const CreateGPTForm = () => {
+const Create = () => {
   return (
     <div>
       <Navbar />
@@ -14,4 +14,4 @@ const CreateGPTForm = () => {
   );
 };
 
-export default CreateGPTForm;
+export default Create;
