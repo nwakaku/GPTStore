@@ -5,9 +5,13 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "./IERC4907.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+
 
 
 contract GPTStore is IERC4907, ERC721URIStorage,  ReentrancyGuard {
+
+    AggregatorV3Interface internal dataFeed;
     
 
     struct Assistant {
@@ -49,13 +53,43 @@ contract GPTStore is IERC4907, ERC721URIStorage,  ReentrancyGuard {
     constructor()
      ERC721("GPTStore", "GPT")
      {
+         dataFeed = AggregatorV3Interface(
+            0x5498BB86BC934c8D34FDA08E81D444153d0D06aD
+        );
         devAddress = msg.sender;
      }
 
-    function setAssistants( string memory assistantId, uint256 priceHour) external {
-        assistantsGroups[assistNo] = Assistant(assistantId, priceHour, msg.sender);
+    function setAssistants( string memory assistantId, uint256 priceHour ) external {
+
+        // Use Chainlink price feed to set the pricePerHour in Dollar equivalent
+        int etherPriceInUSD = getLatestPrice();
+
+        // Calculate the pricePerHour in dollars
+        uint256 pricePerHourInUSD = priceHour * uint(etherPriceInUSD);
+
+
+        assistantsGroups[assistNo] = Assistant(assistantId, pricePerHourInUSD, msg.sender);
         assistantIds.push(assistNo); // Add the assistant ID to the array
         assistNo++;
+    }
+
+    /**
+     * Returns the latest answer.
+     */
+    function getLatestPrice() public view returns (int) {
+        // prettier-ignore
+        (
+            /* uint80 roundID */,
+            int answer,
+            /*uint startedAt*/,
+            uint timeStamp,
+            /*uint80 answeredInRound*/
+        ) = dataFeed.latestRoundData();
+        
+         require(timeStamp > 0, "Chainlink price feed not available");
+
+        // The price is returned with 8 decimals, so we divide by 1e8
+        return int(answer) / 1e8;
     }
 
     function getAllAssistantDetails() external view returns (Assistant[] memory) {
@@ -128,7 +162,7 @@ contract GPTStore is IERC4907, ERC721URIStorage,  ReentrancyGuard {
         require(!hasRented[nftId][msg.sender], "You have already rented this NFT");
         require(assistantsGroups[assistantNo].pricePerHour > 0, "Assistant template not found");
         cleanUpOldRentals();
-        uint256 timeRequested = msg.value * 3600 / assistantsGroups[assistantNo].pricePerHour;
+        uint256 timeRequested = msg.value * 3600 / (assistantsGroups[assistantNo].pricePerHour / 1 ether);
         require(timeRequested >= minRentalTime, "Minimum rental time not met");
         require(timeRequested <= maxRentalTime, "Exceeded maximum rental time");
 
@@ -230,5 +264,7 @@ contract GPTStore is IERC4907, ERC721URIStorage,  ReentrancyGuard {
     function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
         return interfaceId == type(IERC4907).interfaceId || super.supportsInterface(interfaceId);
     }
+
+    
 
 } 

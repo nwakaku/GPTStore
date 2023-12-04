@@ -13,6 +13,10 @@ networks: {
     url: `https://rpc.public.zkevm-test.net`,
     accounts: [ACCOUNT_PRIVATE_KEY],
     },
+    fuji: {
+      url: "https://api.avax-test.network/ext/bc/C/rpc",
+      accounts: [ACCOUNT_PRIVATE_KEY],
+    },
 },
 };
 
