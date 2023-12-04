@@ -1,16 +1,17 @@
 "use client";
 
 import Navbar from "@/components/Navbar";
-import CreatedGPTs from "@/components/CreatedGPTs";
+import GPTForm from "@/components/GPTForm";
 import React from "react";
 
-const Dashboard = () => {
+
+const Create = () => {
   return (
     <div>
       <Navbar />
-      <CreatedGPTs />
+      <GPTForm />
     </div>
   );
 };
 
-export default Dashboard;
+export default Create;

@@ -13,7 +13,7 @@ const Navbar = () => {
          
             <>
               <li><a href="/dashboard" className="text-white hover:bg-white hover:text-black mt-2 px-4 py-2 rounded">Dashboard</a></li>
-              <li><a href="/marketPlace" className="text-white hover:bg-white hover:text-black px-4 py-2 rounded">Marketplace</a></li>
+              <li><a href="/marketplace" className="text-white hover:bg-white hover:text-black px-4 py-2 rounded">Marketplace</a></li>
             </>
           <li>
           <ConnectButton />
