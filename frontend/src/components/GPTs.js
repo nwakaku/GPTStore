@@ -13,12 +13,12 @@ const GPTCard = ({ item }) => {
   const { name, image, description, price } = item;
 
   return (
-    <Card className="m-10 w-80 bg-slate-900 rounded-lg border-none">
-      <CardHeader className="flex items-center justify-center text-center">
+    <Card className="m-10 w-72 bg-slate-900 rounded-lg border-none">
+      <CardHeader className="bg-slate-700 rounded-lg m-4 flex items-center justify-center text-center">
         <img
           src={image}
           alt={name}
-          className="w-48 h-48 object-cover rounded-md"
+          className="w-36 h-36 object-cover rounded-md"
         />
       </CardHeader>
 
@@ -37,7 +37,7 @@ const GPTCard = ({ item }) => {
         </CardDescription>
 
         <div className="mx-auto">
-          <button className="bg-violet-600 hover:bg-violet-800 text-white text-md font-semibold rounded-lg py-2 px-28">
+          <button className="bg-violet-600 hover:bg-violet-800 text-white text-md font-semibold rounded-lg py-2 px-24">
             Rent
           </button>
         </div>
