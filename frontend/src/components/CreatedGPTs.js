@@ -26,7 +26,7 @@ const GPTCard = ({ item }) => {
           <CardTitle className="text-center text-white text-lg font-semibold ">
             {name}
           </CardTitle>
-          <CardTitle className="text-center text-violet-600 text-lg font-semibold ">
+          <CardTitle className="text-center text-[#FFD700] text-lg font-semibold ">
             {price}
           </CardTitle>
         </div>
@@ -54,21 +54,21 @@ const CreatedGPTs = () => {
       image: "/images/logo.png",
       description:
         "GPT-1 is a powerful language model designed to assist users with natural language understanding and generation. It excels in various applications, including text completion, summarization, and conversation generation.",
-      price: "$100 per H",
+      price: "$100 P/Hr",
     },
     {
       name: "Avax",
       image: "/images/logo.png",
       description:
         "Another instance of GPT-1, providing users with additional availability and flexibility. Like the original, it is proficient in understanding and generating human-like text across diverse domains.",
-      price: "$100 per H",
+      price: "$100 P/Hr",
     },
     {
       name: "ENS ",
       image: "/images/pego.png",
       description:
         "GPT-2 represents a more advanced iteration of the language model, boasting enhanced capabilities in natural language processing. With improved performance and understanding, it is well-suited for complex tasks and demanding applications.",
-      price: "$150 per H",
+      price: "$150 P/Hr",
     },
   ];
 
