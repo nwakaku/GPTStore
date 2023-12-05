@@ -21,7 +21,7 @@ const GPTCard = ({ item }) => {
 
   return (
     <Card className="m-10 w-80 bg-slate-900 rounded-lg border-none">
-      <CardHeader className="relative flex items-center justify-center text-center">
+      <CardHeader className="relative flex items-center justify-center text-center rounded-t-lg">
         {time && (
           <div className="absolute top-2 right-2 bg-black text-white font-bold text-sm p-1 rounded-lg">
             expires in: {time}
@@ -50,7 +50,7 @@ const GPTCard = ({ item }) => {
 
         <div className="mx-auto">
           <Link href={"/"}>
-            <button className="bg-violet-600 hover:bg-violet-800 text-white text-md font-semibold rounded-lg py-2 px-28">
+            <button className="bg-purple-900 hover:bg-purple-800 text-white text-md font-semibold rounded-lg py-2 px-28">
               Interact
             </button>
           </Link>
@@ -76,21 +76,21 @@ const CreatedGPTs = () => {
       name: "Chainlink",
       image: "/images/logo.png",
       description:
-        "GPT-1 is a powerful language model designed to assist users with natural language understanding and generation. It excels in various applications, including text completion, summarization, and conversation generation.",
+        "GPT-1 is a powerful language model designed to assist users with natural language understanding and generation.",
       price: "$100 P/hr",
     },
     {
       name: "Avax",
       image: "/images/logo.png",
       description:
-        "Another instance of GPT-1, providing users with additional availability and flexibility. Like the original, it is proficient in understanding and generating human-like text across diverse domains.",
+        "Another instance of GPT-1, providing users with additional availability and flexibility.",
       price: "$100 P/hr",
     },
     {
       name: "ENS ",
       image: "/images/pego.png",
       description:
-        "GPT-2 represents a more advanced iteration of the language model, boasting enhanced capabilities in natural language processing. With improved performance and understanding, it is well-suited for complex tasks and demanding applications.",
+        "GPT-2 represents a more advanced iteration of the language model, boasting enhanced capabilities in natural language processing.",
       price: "$150 P/hr",
     },
   ];
@@ -98,16 +98,7 @@ const CreatedGPTs = () => {
   return (
     <>
       <div className="my-5 mx-32">
-        <div className="flex justify-between items-center mb-4">
-          <p className="font-bold text-lg text-white">My Models</p>
-          {/* <CreateDialog /> */}
-          <button
-            onClick={handleOpen}
-            className="bg-violet-600 hover:bg-violet-800 text-white font-bold py-2 px-4 rounded-full"
-          >
-            Create New GPT
-          </button>
-        </div>
+        
         <div className="flex justify-center">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
             {gptItems.map((item, index) => (

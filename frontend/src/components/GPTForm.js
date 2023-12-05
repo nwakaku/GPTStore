@@ -19,6 +19,7 @@ const GPTForm = () => {
     }));
   };
 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -34,6 +35,11 @@ const GPTForm = () => {
       if (!response.ok) {
         throw new Error('Failed to submit form');
       }
+
+      const [account] = await walletClient.getAddresses();
+
+      console.log(account);
+
 
       const data3 = await response.json();
 

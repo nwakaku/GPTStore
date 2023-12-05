@@ -8,10 +8,10 @@ export const contractAbi = contractStuff;
 export const contractAddress_ZKEvm = "0xcECC5592c69E4bb06deDCfe9c0C280B95Cb8E7D6";
 
 
-export const publicClient = createPublicClient({
-    chain: polygonZkEvmTestnet,
-    transport: http()
-  })
+// export const publicClient = createPublicClient({
+//     chain: polygonZkEvmTestnet,
+//     transport: http()
+//   })
   
 export const walletClient = createWalletClient({
     chain: polygonZkEvmTestnet,
@@ -19,4 +19,4 @@ export const walletClient = createWalletClient({
   })
   
   // JSON-RPC Account
-export const [account] = await walletClient.getAddresses()
+// export const [account] = await walletClient.getAddresses()
