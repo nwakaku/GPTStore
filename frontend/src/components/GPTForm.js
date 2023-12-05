@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { account, contractAbi, contractAddress_ZKEvm, walletClient } from '../utils/config'
+// import { wagmiAbi } from './abi';
 
 
 
