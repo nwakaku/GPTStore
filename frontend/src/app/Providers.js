@@ -18,9 +18,12 @@ import {
   arbitrum,
   goerli,
   avalancheFuji,
-  polygonZkEvmTestnet
+  polygonZkEvmTestnet,
+  sepolia
 } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
+import { ContractProvider } from './ContractContext';
+
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
@@ -29,6 +32,7 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
     arbitrum,
     avalancheFuji,
     polygonZkEvmTestnet,
+    sepolia,
     ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === 'true' ? [goerli] : []),
   ],
   [publicProvider()]
@@ -69,10 +73,12 @@ export function Providers({ children }) {
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => setMounted(true), []);
   return (
-    <WagmiConfig config={wagmiConfig}>
-      <RainbowKitProvider chains={chains} appInfo={demoAppInfo}>
-        {mounted && children}
-      </RainbowKitProvider>
-    </WagmiConfig>
+    <ContractProvider>
+      <WagmiConfig config={wagmiConfig}>
+        <RainbowKitProvider chains={chains} appInfo={demoAppInfo}>
+          {mounted && children}
+        </RainbowKitProvider>
+      </WagmiConfig>
+    </ContractProvider>
   );
 }

@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   CardHeader,
@@ -8,6 +8,11 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
+import { readContract, getAccount, writeContract } from '@wagmi/core';
+import { useContract } from "@/app/ContractContext";
+
+
+
 
 const GPTCard = ({ item }) => {
   const { name, image, description, price } = item;
@@ -47,6 +52,34 @@ const GPTCard = ({ item }) => {
 };
 
 const GPTs = () => {
+
+  // from
+  const [data, setData] = useState(null);
+  const { contractAbi, contractAddress, contract } = useContract();
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const {account} = getAccount()
+
+      try {
+        const result = await readContract({
+          address: contractAddress,
+          abi: contractAbi,
+          functionName: 'getAllAssistantDetails',
+          account,
+        })
+        setData(result);
+        console.log(result);
+        // console.log("result");
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   // Your logic or data fetching for GPT cards
   const gptItems = [
     {
