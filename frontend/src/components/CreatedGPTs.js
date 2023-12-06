@@ -49,7 +49,12 @@ const GPTCard = ({ item }) => {
         </CardDescription>
 
         <div className="mx-auto">
-          <Link href={"/question"}>
+          <Link
+            href={{
+              pathname: "/question",
+              query: { name, image, description },
+            }}
+          >
             <button className="bg-violet-600 hover:bg-violet-800 text-white text-md font-semibold rounded-lg py-2 px-28">
               Interact
             </button>
