@@ -1,15 +1,27 @@
-"use client";
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
   CardContent,
-  CardFooter,
 } from "@/components/ui/card";
-import { readContract, getAccount, writeContract } from '@wagmi/core';
-import { useContract } from "@/app/ContractContext";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useRouter } from "next/navigation";
+
+const SuccessfulRented = () => (
+  <div className="text-white text-center p-4 bg-green-500 rounded-md">
+    Successfully Rented! Redirecting...
+  </div>
+);
 
 const GPTCard = ({ item, onRentSuccess }) => {
   const { name, image, description, price } = item;
@@ -21,12 +33,12 @@ const GPTCard = ({ item, onRentSuccess }) => {
   };
 
   return (
-    <Card className="m-10 w-80 bg-slate-900 rounded-lg border-none">
-      <CardHeader className="flex items-center justify-center text-center">
+    <Card className="m-10 w-72 bg-slate-900 rounded-lg border-none">
+      <CardHeader className="bg-slate-700 rounded-lg m-4 flex items-center justify-center text-center">
         <img
           src={image}
           alt={name}
-          className="w-48 h-48 object-cover rounded-md"
+          className="w-36 h-36 object-cover rounded-md"
         />
       </CardHeader>
 
@@ -66,7 +78,10 @@ const GPTCard = ({ item, onRentSuccess }) => {
           </Select>
         </div>
         <div className="mx-auto">
-          <button className="bg-purple-900 hover:bg-purple-800 text-white text-md font-semibold rounded-lg py-2 px-28">
+          <button
+            onClick={handleRentClick}
+            className="bg-violet-600 hover:bg-violet-800 text-white text-md font-semibold rounded-lg py-2 px-24 mt-4"
+          >
             Rent
           </button>
         </div>
@@ -76,32 +91,23 @@ const GPTCard = ({ item, onRentSuccess }) => {
 };
 
 const GPTs = () => {
-  // from
-  const [data, setData] = useState(null);
-  const { contractAbi, contractAddress, contract } = useContract();
+  const [isRented, setIsRented] = useState(false);
 
+  const router = useRouter();
 
   useEffect(() => {
-    const fetchData = async () => {
-      const {account} = getAccount()
+    if (isRented) {
+      const redirectTimer = setTimeout(() => {
+        router.push("/dashboard");
+      }, 3000);
 
-      try {
-        const result = await readContract({
-          address: contractAddress,
-          abi: contractAbi,
-          functionName: 'getAllAssistantDetails',
-          account,
-        })
-        setData(result);
-        console.log(result);
-        // console.log("result");
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
+      return () => clearTimeout(redirectTimer);
+    }
+  }, [isRented]);
 
-    fetchData();
-  }, []);
+  const handleRentSuccess = () => {
+    setIsRented(true);
+  };
 
   // Your logic or data fetching for GPT cards
   const gptItems = [
@@ -109,22 +115,22 @@ const GPTs = () => {
       name: "Chainlink",
       image: "/images/logo.png",
       description:
-      "GPT-1 is a powerful language model designed to assist users with natural language understanding and generation.",
-      price: "$100 P/hr",
+        "GPT-1 is a powerful language model designed to assist users with natural language understanding and generation.",
+      price: "$100 p/hr",
     },
     {
       name: "Avax",
       image: "/images/logo.png",
       description:
         "Another instance of GPT-1, providing users with additional availability and flexibility.",
-      price: "$100 P/hr",
+      price: "$100 p/hr",
     },
     {
       name: "ENS ",
       image: "/images/pego.png",
       description:
         "GPT-2 represents a more advanced iteration of the language model, boasting enhanced capabilities in natural language processing.",
-      price: "$150 P/hr",
+      price: "$150 p/hr",
     },
   ];
 

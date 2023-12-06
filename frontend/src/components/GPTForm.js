@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { account, contractAbi, contractAddress_ZKEvm, walletClient } from '../configs/config'
 
 
 
@@ -23,7 +22,6 @@ const GPTForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
       // Assuming your server is running on http://localhost:5000
       const response = await fetch(`http://localhost:5000/crawl?url=${formData.url}&match=${formData.match}&maxPagesToCrawl=${formData.maxPagesToCrawl}`, {
         method: 'POST',
@@ -43,21 +41,21 @@ const GPTForm = () => {
 
       const data3 = await response.json();
 
-      const { request } = await publicClient.simulateContract({
-        address: contractAddress_ZKEvm,
-        abi: contractAbi,
-        functionName: 'setAssistants',
-        args: [data3.id, formData.priceHour],
-        account
-      })
+    //   const { request } = await publicClient.simulateContract({
+    //     address: contractAddress_ZKEvm,
+    //     abi: contractAbi,
+    //     functionName: 'setAssistants',
+    //     args: [data3.id, formData.priceHour],
+    //     account
+    //   })
 
-      await walletClient.writeContract(request)
-      console.log(data3);
-      console.log('Form submitted successfully');
-    } catch (error) {
-      console.error('Error submitting form:', error);
-    }
-  };
+    //   await walletClient.writeContract(request)
+    //   console.log(data3);
+    //   console.log('Form submitted successfully');
+    // } catch (error) {
+    //   console.error('Error submitting form:', error);
+    // }
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center">
@@ -116,7 +114,7 @@ const GPTForm = () => {
               type="submit"
               className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md"
             >
-              CreateGPT
+              CreateAssistant
             </button>
           </div>
         </form>
