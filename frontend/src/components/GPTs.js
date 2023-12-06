@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardHeader,
@@ -8,9 +8,28 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const GPTCard = ({ item }) => {
   const { name, image, description, price } = item;
+
+  const [amount, setAmount] = useState("");
+  const [paymentType, setPaymentType] = useState("USD");
+
+  const paymentOptions = [
+    { label: "USD", value: "USD" },
+    { label: "ETH", value: "ETH" },
+    { label: "LINK", value: "LINK" },
+  ];
 
   return (
     <Card className="m-10 w-72 bg-slate-900 rounded-lg border-none">
@@ -36,8 +55,29 @@ const GPTCard = ({ item }) => {
           {description}
         </CardDescription>
 
+        <div className=" flex items-center justify-between mx-3">
+          <Input
+            type="text"
+            name="price"
+            className=" mr-3 border rounded-md focus:outline-none focus:border-violet-400 text-white"
+            placeholder="Enter amount"
+            required
+          />
+          <Select>
+            <SelectTrigger className="w-18 text-white">
+              <SelectValue placeholder="USD" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value="usd">USD</SelectItem>
+                <SelectItem value="link">LINK</SelectItem>
+                <SelectItem value="dollar">AVAX</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
         <div className="mx-auto">
-          <button className="bg-violet-600 hover:bg-violet-800 text-white text-md font-semibold rounded-lg py-2 px-24">
+          <button className="bg-violet-600 hover:bg-violet-800 text-white text-md font-semibold rounded-lg py-2 px-24 mt-4">
             Rent
           </button>
         </div>
@@ -53,7 +93,7 @@ const GPTs = () => {
       name: "Chainlink",
       image: "/images/logo.png",
       description:
-      "GPT-1 is a powerful language model designed to assist users with natural language understanding and generation. It excels in various applications, including text completion, summarization, and conversation generation.",
+        "GPT-1 is a powerful language model designed to assist users with natural language understanding and generation. It excels in various applications, including text completion, summarization.",
       price: "$100 P/Hr",
     },
     {
@@ -67,7 +107,7 @@ const GPTs = () => {
       name: "ENS ",
       image: "/images/pego.png",
       description:
-        "GPT-2 represents a more advanced iteration of the language model, boasting enhanced capabilities in natural language processing. With improved performance and understanding, it is well-suited for complex tasks and demanding applications.",
+        "GPT-2 represents a more advanced iteration of the language model, boasting enhanced capabilities in natural language processing. With improved performance and understanding, it is well-suited fors.",
       price: "$150 per H",
     },
   ];
