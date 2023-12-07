@@ -603,6 +603,11 @@
 						"type": "address"
 					},
 					{
+						"internalType": "string",
+						"name": "URI",
+						"type": "string"
+					},
+					{
 						"internalType": "uint64",
 						"name": "expires",
 						"type": "uint64"
@@ -615,6 +620,11 @@
 					{
 						"internalType": "uint256",
 						"name": "assistantNo",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "timeRequested",
 						"type": "uint256"
 					}
 				],

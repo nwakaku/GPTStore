@@ -16,6 +16,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
+import { readContract, writeContract  } from '@wagmi/core'
+import { useContract } from "@/app/ContractContext";
+import { parseEther } from 'viem'
+
+
 
 const SuccessfulRented = () => (
   <div className="text-white text-center p-4 bg-green-500 rounded-md">
@@ -23,21 +28,95 @@ const SuccessfulRented = () => (
   </div>
 );
 
-const GPTCard = ({ item, onRentSuccess }) => {
-  const { name, image, description, price } = item;
-  const [isRented, setIsRented] = useState(false);
+const GPTCard = ({ item, onRentSuccess, index }) => {
+  const { contractAbi, contractAddress, contract } = useContract();
 
-  const handleRentClick = () => {
+  const { assistantID, owner, pricePerHour } = item;
+  console.log(assistantID, owner, pricePerHour, index);
+
+  async function fetchDataFromUrl(url) {
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch data from ${url}`);
+        }
+
+        const data = await response.json();
+
+        console.log(data);
+        return data
+      } catch (error) {
+        console.error(error.message);
+      }
+  }
+
+  const [cardData, setCardData] = useState({
+    name: '',
+    image: '',
+    match: '',
+    description: '',
+    priceHour: '',
+  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await fetchDataFromUrl(assistantID);
+
+      if (data) {
+        // Update the component state with the fetched data
+        const ipfsUrl = data.image;
+
+        const cleanedUrl = ipfsUrl.replace(/^ipfs:\/\//, '');
+
+        setCardData({
+          name: data.name,
+          image: cleanedUrl,
+          match: data.match,
+          description: data.description,
+          priceHour: data.priceHour,
+        });
+      }
+    };
+
+    fetchData();
+  }, [assistantID]);
+
+ const imageUrl = `${cardData.image}?content-type=image/jpeg`;
+
+
+  const [isRented, setIsRented] = useState(false);
+  const [price, setPrice] = useState('');
+
+  const handleInputChange = (e) => {
+    setPrice(e.target.value);
+  };
+
+  const handleRentClick = async () => {
+  try {
+    // Assuming writeContract is the correct function for sending transactions
+    await writeContract({
+      address: contractAddress,
+      abi: contractAbi,
+      functionName: 'rent',
+      value: parseEther(price), // You may need to adjust this depending on your contract requirements
+      args: ["metadata", index + 1]
+    });
+
+    // Transaction was successful
     setIsRented(true);
     onRentSuccess();
-  };
+  } catch (error) {
+    console.error('Error sending rent transaction:', error);
+    // Handle the error appropriately, e.g., show an error message to the user
+  }
+};
 
   return (
     <Card className="m-10 w-72 bg-slate-900 rounded-lg border-none">
       <CardHeader className="bg-slate-700 rounded-lg m-4 flex items-center justify-center text-center">
         <img
-          src={image}
-          alt={name}
+          src={`https://ipfs.io/ipfs/${cardData.image}`}
+          alt={cardData.name}
           className="w-36 h-36 object-cover rounded-md"
         />
       </CardHeader>
@@ -45,15 +124,15 @@ const GPTCard = ({ item, onRentSuccess }) => {
       <CardContent className="text-center">
         <div className="mx-3 flex justify-between items-center mb-2">
           <CardTitle className="text-center text-white text-lg font-semibold ">
-            {name}
+            {cardData.name}
           </CardTitle>
           <CardTitle className="text-center text-[#FFD700] text-lg font-semibold ">
-            {price}
+            {cardData.priceHour}
           </CardTitle>
         </div>
 
         <CardDescription className="text-center text-slate-500 text-base font-normal mb-4">
-          {description}
+          {cardData.description}
         </CardDescription>
 
         <div className=" flex items-center justify-between mx-3">
@@ -62,6 +141,8 @@ const GPTCard = ({ item, onRentSuccess }) => {
             name="price"
             className=" mr-3 border rounded-md focus:outline-none focus:border-violet-400 text-white"
             placeholder="Enter amount"
+            value={price} 
+            onChange={handleInputChange}
             required
           />
           <Select>
@@ -91,6 +172,27 @@ const GPTCard = ({ item, onRentSuccess }) => {
 };
 
 const GPTs = () => {
+  const { contractAbi, contractAddress, contract } = useContract();
+  const [cid, setCid] = useState();
+  
+  useEffect(() => {
+    // Reading from Contracts
+    const fetchResults = async () => {
+      const results = await readContract({
+        address: contractAddress,
+        abi: contractAbi,
+        functionName: 'getAllAssistantDetails',
+      })
+      // returns an array of results
+      setCid(results);
+      console.log(results)
+    }
+
+    fetchResults()
+
+  }, []);
+  
+
   const [isRented, setIsRented] = useState(false);
 
   const router = useRouter();
@@ -109,41 +211,17 @@ const GPTs = () => {
     setIsRented(true);
   };
 
-  // Your logic or data fetching for GPT cards
-  const gptItems = [
-    {
-      name: "Chainlink",
-      image: "/images/logo.png",
-      description:
-        "GPT-1 is a powerful language model designed to assist users with natural language understanding and generation.",
-      price: "$100 p/hr",
-    },
-    {
-      name: "Avax",
-      image: "/images/logo.png",
-      description:
-        "Another instance of GPT-1, providing users with additional availability and flexibility.",
-      price: "$100 p/hr",
-    },
-    {
-      name: "ENS ",
-      image: "/images/pego.png",
-      description:
-        "GPT-2 represents a more advanced iteration of the language model, boasting enhanced capabilities in natural language processing.",
-      price: "$150 p/hr",
-    },
-  ];
-
   return (
     <div className="flex justify-center p-10">
       {isRented ? (
         <SuccessfulRented />
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-          {gptItems.map((item, index) => (
+          {cid && cid.map((item, index) => (
             <GPTCard
               key={index}
-              item={item}
+              item={item} 
+              index = {index}
               onRentSuccess={handleRentSuccess}
             />
           ))}
