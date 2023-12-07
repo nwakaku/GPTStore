@@ -23,7 +23,7 @@ const GPTCard = ({ item }) => {
     <Card className="m-10 w-80 bg-slate-900 rounded-lg border-none">
       <CardHeader className="relative flex items-center justify-center text-center rounded-t-lg">
         {time && (
-          <div className="absolute top-2 right-2 bg-black text-white font-bold text-sm p-1 rounded-lg">
+          <div className="absolute top-2 right-2 bg-slate-300 text-black font-bold text-sm p-1 rounded-md">
             expires in: {time}
           </div>
         )}
@@ -83,6 +83,7 @@ const CreatedGPTs = () => {
       description:
         "GPT-1 is a powerful language model designed to assist users with natural language understanding and generation.",
       price: "$100 P/hr",
+      time: '30mins'
     },
     {
       name: "Avax",
@@ -97,6 +98,7 @@ const CreatedGPTs = () => {
       description:
         "GPT-2 represents a more advanced iteration of the language model, boasting enhanced capabilities in natural language processing.",
       price: "$150 P/hr",
+      time: '1h'
     },
   ];
 
