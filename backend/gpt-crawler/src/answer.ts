@@ -2,7 +2,7 @@ import fs from "fs";
 import OpenAI from "openai";
 
 const openAIApiKey = "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";
-const assistantId = "asst_NCuD339x7Ufga3obEAkH5NzL";
+// const assistantId = "asst_NCuD339x7Ufga3obEAkH5NzL";
 
 
 const openai = new OpenAI({
@@ -10,7 +10,7 @@ const openai = new OpenAI({
 });
 
 
-export async function answer(userQuestion : string) {
+export async function answer(userQuestion : string, assistantId: string) {
     // Create a thread using the assistantId
     const thread = await openai.beta.threads.create();
     

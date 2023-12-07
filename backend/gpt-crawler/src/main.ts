@@ -71,10 +71,10 @@ app.post('/question', async (req, res) => {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   
 try {
-  const { ask } = req.query; // Assuming the data is sent in the request body
+  const { ask, assistantId } = req.query; // Assuming the data is sent in the request body
 
   // Start the crawling process
-  const jsonFiles = await answer(ask as string)
+  const jsonFiles = await answer(ask as string, assistantId as string);
   res.status(200).json( jsonFiles );
 } catch (error) {
   console.error(error);

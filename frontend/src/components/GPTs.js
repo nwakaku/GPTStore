@@ -19,6 +19,7 @@ import { useRouter } from "next/navigation";
 import { readContract, writeContract  } from '@wagmi/core'
 import { useContract } from "@/app/ContractContext";
 import { parseEther } from 'viem'
+import { useFetchData } from "./hooks/useFetchData";
 
 
 
@@ -28,61 +29,14 @@ const SuccessfulRented = () => (
   </div>
 );
 
+
 const GPTCard = ({ item, onRentSuccess, index }) => {
   const { contractAbi, contractAddress, contract } = useContract();
 
   const { assistantID, owner, pricePerHour } = item;
   console.log(assistantID, owner, pricePerHour, index);
 
-  async function fetchDataFromUrl(url) {
-      try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch data from ${url}`);
-        }
-
-        const data = await response.json();
-
-        console.log(data);
-        return data
-      } catch (error) {
-        console.error(error.message);
-      }
-  }
-
-  const [cardData, setCardData] = useState({
-    name: '',
-    image: '',
-    match: '',
-    description: '',
-    priceHour: '',
-  });
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const data = await fetchDataFromUrl(assistantID);
-
-      if (data) {
-        // Update the component state with the fetched data
-        const ipfsUrl = data.image;
-
-        const cleanedUrl = ipfsUrl.replace(/^ipfs:\/\//, '');
-
-        setCardData({
-          name: data.name,
-          image: cleanedUrl,
-          match: data.match,
-          description: data.description,
-          priceHour: data.priceHour,
-        });
-      }
-    };
-
-    fetchData();
-  }, [assistantID]);
-
- const imageUrl = `${cardData.image}?content-type=image/jpeg`;
-
+  const cardData = useFetchData(assistantID);
 
   const [isRented, setIsRented] = useState(false);
   const [price, setPrice] = useState('');
@@ -127,7 +81,7 @@ const GPTCard = ({ item, onRentSuccess, index }) => {
             {cardData.name}
           </CardTitle>
           <CardTitle className="text-center text-[#FFD700] text-lg font-semibold ">
-            {cardData.priceHour}
+            {cardData.priceHour} P/hr
           </CardTitle>
         </div>
 

@@ -2,31 +2,38 @@ import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { useFetchData } from "./hooks/useFetchData";
 
 const Question = () => {
-  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const URI = searchParams.get('uri');
+
+  const {name, image, match, description ,priceHour, assistantID} = useFetchData(URI);
+
+
   const [formData, setFormData] = useState({
     question: "",
   });
   const [answer, setAnswer] = useState("");
   const [gptInfo, setGptInfo] = useState({});
 
-  useEffect(() => {
-    console.log("router.query:", router.query);
-    if (
-      router.query &&
-      router.query.name &&
-      router.query.image &&
-      router.query.description
-    ) {
-      setGptInfo({
-        name: router.query.name,
-        image: router.query.image,
-        description: router.query.description,
-      });
-    }
-  }, [router.query]);
+  // useEffect(() => {
+  //   console.log("router.query:", router.query);
+  //   if (
+  //     router.query &&
+  //     router.query.name &&
+  //     router.query.image &&
+  //     router.query.description
+  //   ) {
+  //     setGptInfo({
+  //       name: router.query.name,
+  //       image: router.query.image,
+  //       description: router.query.description,
+  //     });
+  //   }
+  // }, [router.query]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -48,7 +55,7 @@ const Question = () => {
     try {
       // Assuming your server is running on http://localhost:5000
       const response = await fetch(
-        `http://localhost:5000/question?ask=${formData.question}`,
+        `http://localhost:5000/question?ask=${formData.question}&assistantId=${assistantID}`,
         {
           method: "POST",
           headers: {
@@ -79,12 +86,12 @@ const Question = () => {
         {/* Content for the left portion goes here */}
         <div className="text-center">
           <img
-            src={gptInfo.image || "/placeholder-image.png"} // Use a placeholder image if image is not available
+            src={`https://ipfs.io/ipfs/${image}`} // Use a placeholder image if image is not available
             alt="alt"
             className="w-20 h-20 object-cover rounded-md mx-auto"
           />
           <div className="text-slate-400 font-bold text-sm p-2 mt-2">
-            {gptInfo.description || "No description available"}
+            {description}
           </div>
         </div>
         <div className="text-center">
@@ -135,12 +142,12 @@ const Question = () => {
         <div className="flex items-center justify-between p-3">
           <div className="flex items-center space-x-3 rtl:space-x-reverse">
             <img
-              src={gptInfo.image || "/placeholder-image.png"}
+              src={`https://ipfs.io/ipfs/${image}`}
               className="h-8"
               alt="God help Us"
             />
             <span className="self-center text-slate-400 text-1xl font-semibold whitespace-nowrap dark:text-white">
-              {gptInfo.name || "No name available"}
+              {name || "No name available"}
             </span>
           </div>
           <p className="text-slate-400 text-sm mr-5">Clear chat</p>

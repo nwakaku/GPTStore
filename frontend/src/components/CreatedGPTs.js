@@ -17,6 +17,7 @@ import {
 import Link from "next/link";
 import { useContract } from "@/app/ContractContext";
 import { readContract, getAccount } from '@wagmi/core';
+import { useFetchData } from "./hooks/useFetchData";
 
 
 const GPTCard = ({ item, index }) => {
@@ -24,52 +25,7 @@ const GPTCard = ({ item, index }) => {
   
   console.log(URI, assistantNo, payment, timeRequested, user);
 
-  async function fetchDataFromUrl(url) {
-      try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch data from ${url}`);
-        }
-
-        const data = await response.json();
-
-        console.log(data);
-        return data
-      } catch (error) {
-        console.error(error.message);
-      }
-  }
-
-  const [cardData, setCardData] = useState({
-    name: '',
-    image: '',
-    match: '',
-    description: '',
-    priceHour: '',
-  });
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const data = await fetchDataFromUrl(URI);
-
-      if (data) {
-        // Update the component state with the fetched data
-        const ipfsUrl = data.image;
-
-        const cleanedUrl = ipfsUrl.replace(/^ipfs:\/\//, '');
-
-        setCardData({
-          name: data.name,
-          image: cleanedUrl,
-          match: data.match,
-          description: data.description,
-          priceHour: data.priceHour,
-        });
-      }
-    };
-
-    fetchData();
-  }, [URI]);
+  const cardData = useFetchData(URI);
 
 
   return (
@@ -94,7 +50,7 @@ const GPTCard = ({ item, index }) => {
             {cardData.name}
           </CardTitle>
           <CardTitle className="text-center text-[#FFD700] text-lg font-semibold ">
-            {cardData.priceHour}
+            {cardData.priceHour} P/hr
           </CardTitle>
         </div>
 
@@ -106,7 +62,7 @@ const GPTCard = ({ item, index }) => {
           <Link
             href={{
               pathname: "/question",
-              // query: { cardData.name, image, description },
+              query: { uri: item.URI },
             }}
           >
             <button className="bg-violet-600 hover:bg-violet-800 text-white text-md font-semibold rounded-lg py-2 px-28">
