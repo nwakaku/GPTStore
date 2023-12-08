@@ -1,46 +1,44 @@
-## GPTStore
-Create and train GPTS from any information source and earn tokens by renting your created GPTs to others on a time-based access  
+# GPTStore
 
-### Inspiration
-Chat GPT and other chat LLMs are generalized in knowledge and are often times, behind in knowledge (knowledge cutoffs). New protocols and informations are not captured in their knowledge base and even captured informations are most times very shallow since there is a lot of informations to index. We saw this limitation firsthand when trying to use chatGpt to build on a new protocol and most times it provided inaccurate informations or was of very little help, this challenge got us thinking of a solution to this problem and this what birthed GPTStore.
+## Overview
+GPTStore is a platform that empowers users to easily create and train GPTs models by leveraging information from any source. Users can earn tokens by renting out their created GPTs, providing others with time-based access to the GPTs.
 
-### What it does
-GPTStore allows anyone to easily create GPTs by provide a knowledge URL, define the pages to crawl and index, and some customizations such as name, description, price and logo. the GPT is created and trained on the information from the URL and listed on the marketplace.
-Anyone can rent this GPTs and is granted access to the GPT based on their rented time, the holder can interact with the GPT for as long time as he has rented and when this time elapses (rent expired), chainlink automation triggers and access is revoked.
+## Inspiration
+Our inspiration for GPTStore stems from a shared desire to empower individuals, particularly developers, with seamless access to accurate and real-time domain-specific information. We envision a platform where users can engage in insightful conversations and queries with a model, fostering an enjoyable and effective way to learn new concepts.
 
-### How we built it
+The motivation behind GPTStore also arises from the limitations of current generalized models. Existing language models often face challenges with knowledge cutoffs, hindering their ability to provide timely and precise information, especially in rapidly evolving domains. GPTStore seeks to address these issues by offering a solution that goes beyond generic knowledge and embraces the dynamism required in today's information landscape.
 
-- #### Usage of Chainlink CCIP
-GPTStore leverages Chainlink's Cross-Chain Interoperability Protocol (CCIP) to enable seamless communication and data transfer across different blockchains. The utilization of CCIP is fundamental to.
+## Functionality
+GPTStore facilitates the creation of GPTs by allowing users to provide a knowledge URL, define number of pages for crawling and indexing, and customize details such as name, description, price, and logo. The created GPTs are then listed on the marketplace for others to rent. Renters gain access to the GPTs based on their rented time, and when the rental period expires, Chainlink automation triggers access revocation.
 
-- #### Usage of Chainlink Automation
-GPTStore leverages Chainlink Automation to automate and streamline ? at predefined intervals. Chainlink Automation ensures the timely and efficient execution of ?. This automation eliminates the need for manual intervention, reducing the risk of delays and enhancing the overall reliability of ?.
-
-- #### Usage of Chainlink Price Feeds
-GPTStore employs Chainlink Price Feeds to dynamically calculate the rent fee in ETH and LINK on-chain. By leveraging Chainlink's reliable and decentralized price oracle network, GPTStore ensures accurate and up-to-date conversion rates between ETH and LINK. This integration allows for real-time fee adjustments based on market fluctuations, providing a fair and transparent mechanism for determining proposal creation costs.
-
-### Technology Stack
-- Nextjs
+## Technology Stack
+- Next.js
 - Express
 - Solidity
 - OpenAI
-- chainlink automation
-- chainlink price feed
+- Chainlink Automation
+- Chainlink Price Feeds
 
+## Implementation Details
 
-### Challenges we ran into
+- **Chainlink CCIP Integration**: GPTStore seamlessly communicates and transfers data across different blockchains using Chainlink's Cross-Chain Interoperability Protocol (CCIP).
 
+- **Chainlink Automation**: GPTStore automates predefined tasks at regular intervals using Chainlink Automation, ensuring timely and efficient execution without manual intervention.
 
-### Accomplishments that we're proud of
-All core functions, creation of assistant, GPT renting,  chainlink automation implementation, price feed for dynamically setting prices and CCIP for cross chain operation. 
+- **Chainlink Price Feeds**: GPTStore utilizes Chainlink Price Feeds to dynamically calculate rent fees in AVAX and LINK to USD on-chain. This integration provides accurate and real-time conversion rates, allowing for fair and transparent fee adjustments based on market fluctuations.
 
-### What we learned
-This our first time building with chainlink CCIP, and we learned a lot in the process 
+## Accomplishments
 
-### What's next for GPTStore
-- Extend to incorporate other web3 protocols,
-- Create a platform where anyone can create Knowledge specific GPTs and rent out this GPTs to earn 
+GPTStore boasts successful implementation of all core functionalities, including assistant creation, GPT renting, Chainlink automation, price feed integration for dynamic pricing, and CCIP for cross-chain operations.
 
-### Try out links
-- (Github Repo)[]
-- (website)[]
+## Learning Experience
+
+Building with Chainlink CCIP for the first time was a valuable learning experience, enriching the team with insights into seamless cross-chain communication.
+
+## Future Roadmap
+As GPTStore evolves, our vision extends beyond the current capabilities. We aim to diversify by incorporating additional web3 protocols, creating a vibrant ecosystem where users can craft specialized GPTs tailored to distinct knowledge domains. The roadmap envisions a dynamic platform, fostering a community-driven marketplace for knowledge-sharing through rented GPTs.
+
+## Try It Out
+
+- [GitHub](https://github.com/nwakaku/GPTStore)
+- [Website](https://github.com/nwakaku/GPTStore)
