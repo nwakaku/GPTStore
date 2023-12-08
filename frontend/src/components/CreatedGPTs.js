@@ -16,27 +16,27 @@ import {
 } from "@/components/ui/dialog";
 import Link from "next/link";
 import { useContract } from "@/app/ContractContext";
-import { readContract, getAccount } from '@wagmi/core';
+import { readContract, getAccount } from "@wagmi/core";
 import { useFetchData } from "./hooks/useFetchData";
+import { useRouter } from 'next/navigation';
 
 
 const GPTCard = ({ item, index }) => {
   const { URI, assistantNo, payment, timeRequested, user } = item;
-  
+
   console.log(URI, assistantNo, payment, timeRequested, user);
 
   const cardData = useFetchData(URI);
 
-
   return (
-    <Card className="m-10 w-80 bg-slate-900 rounded-lg border-none">
-      <CardHeader className="relative flex items-center justify-center text-center rounded-t-lg">
+    <Card className="m-10 w-72 bg-slate-900 rounded-lg border-none">
+      <CardHeader className="bg-slate-700 rounded-lg m-4 flex items-center justify-center text-center">
         {timeRequested && (
           <div className="absolute top-2 right-2 bg-black text-white font-bold text-sm p-1 rounded-lg">
             expires in: {timeRequested}
           </div>
         )}
-        
+
         <img
           src={`https://ipfs.io/ipfs/${cardData.image}`}
           alt={cardData.name}
@@ -50,7 +50,7 @@ const GPTCard = ({ item, index }) => {
             {cardData.name}
           </CardTitle>
           <CardTitle className="text-center text-[#FFD700] text-lg font-semibold ">
-            {cardData.priceHour} P/hr
+          ${cardData.priceHour} p/hr
           </CardTitle>
         </div>
 
@@ -78,24 +78,23 @@ const GPTCard = ({ item, index }) => {
 const CreatedGPTs = () => {
   const { contractAbi, contractAddress, contract } = useContract();
   const [cid, setCid] = useState();
-  const account = getAccount()
-  
+  const account = getAccount();
+
   useEffect(() => {
     // Reading from Contracts
     const fetchResults = async () => {
       const results = await readContract({
         address: contractAddress,
         abi: contractAbi,
-        functionName: 'getUserRentedAssistants',
+        functionName: "getUserRentedAssistants",
         account,
-      })
+      });
       // returns an array of results
       setCid(results);
-      console.log(results)
-    }
+      console.log(results);
+    };
 
-    fetchResults()
-
+    fetchResults();
   }, []);
 
   const [isDialogOpen, setDialogOpen] = useState(false);
@@ -111,13 +110,39 @@ const CreatedGPTs = () => {
   return (
     <>
       <div className="my-5 mx-32">
-        
         <div className="flex justify-center">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-            {cid && cid.map((item, index) => (
-              <GPTCard key={index} item={item} />
-            ))}
-          </div>
+          {cid && cid.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+              {cid.map((item, index) => (
+                <GPTCard key={index} item={item} />
+              ))}
+            </div>
+          ) : (
+            <div className="mt-14 flex flex-col items-center">
+              <p className="text-center text-gray-500 text-3xl font-semibold mb-4">
+                You don't have any created or rented GPTs yet.
+              </p>
+              <img
+                src={"/images/empty.png"}
+                alt={"empty"}
+                className="w-80 h-80 object-cover rounded-md mb-6"
+              />
+              {/* <div className="flex space-x-4 mt-4">
+                <p
+                  className="text-lg text-gray-500 cursor-pointer"
+                  onClick={() => router.push("/creator")}
+                >
+                  Create your own GPT
+                </p>
+                <p
+                  className="text-lg text-gray-500 cursor-pointer"
+                  onClick={() => router.push("/marketplace")}
+                >
+                  Visit our marketplace to rent a GPT
+                </p>
+              </div> */}
+            </div>
+          )}
         </div>
       </div>
 

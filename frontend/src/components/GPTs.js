@@ -31,6 +31,7 @@ const SuccessfulRented = () => (
 
 
 const GPTCard = ({ item, onRentSuccess, index }) => {
+  const [loading, setLoading] = useState(false);
   const { contractAbi, contractAddress, contract } = useContract();
 
   const { assistantID, owner, pricePerHour } = item;
@@ -47,6 +48,7 @@ const GPTCard = ({ item, onRentSuccess, index }) => {
 
   const handleRentClick = async () => {
   try {
+    setLoading(true);
     // Assuming writeContract is the correct function for sending transactions
     await writeContract({
       address: contractAddress,
@@ -62,6 +64,8 @@ const GPTCard = ({ item, onRentSuccess, index }) => {
   } catch (error) {
     console.error('Error sending rent transaction:', error);
     // Handle the error appropriately, e.g., show an error message to the user
+  } finally {
+    setLoading(false);
   }
 };
 
@@ -81,7 +85,7 @@ const GPTCard = ({ item, onRentSuccess, index }) => {
             {cardData.name}
           </CardTitle>
           <CardTitle className="text-center text-[#FFD700] text-lg font-semibold ">
-            {cardData.priceHour} P/hr
+          ${cardData.priceHour} p/hr
           </CardTitle>
         </div>
 
@@ -113,11 +117,14 @@ const GPTCard = ({ item, onRentSuccess, index }) => {
           </Select>
         </div>
         <div className="mx-auto">
-          <button
+        <button
             onClick={handleRentClick}
-            className="bg-violet-600 hover:bg-violet-800 text-white text-md font-semibold rounded-lg py-2 px-24 mt-4"
+            className={`${
+              loading ? 'bg-gray-700 cursor-not-allowed' : 'bg-violet-600 hover:bg-violet-800'
+            } text-white text-md font-semibold rounded-lg py-2 px-24 mt-4`}
+            disabled={loading}
           >
-            Rent
+            {loading ? 'Loading...' : 'Rent'}
           </button>
         </div>
       </CardContent>
