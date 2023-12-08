@@ -12,8 +12,10 @@ export const useFetchData = (URI) => {
 
   useEffect(() => {
     const fetchDataFromUrl = async (url) => {
-      try {
-        const response = await fetch(url);
+        try {
+            const cleanedUrl = url.replace(/^ipfs:\/\//, '');
+            const src=`https://ipfs.io/ipfs/${cleanedUrl}`;
+        const response = await fetch(src);
         if (!response.ok) {
           throw new Error(`Failed to fetch data from ${url}`);
         }

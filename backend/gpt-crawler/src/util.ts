@@ -1,22 +1,25 @@
 import fs from "fs";
 import OpenAI from "openai";
+import { fileURLToPath } from 'url';
+import path, { dirname } from 'path';
+import 'dotenv/config';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 
 const openai = new OpenAI({
-  apiKey: ''
+  apiKey: "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"
 });
 
-// const upF = require("../output.json")
+const outputPath = path.resolve(__dirname, 'output.json');
 
 export async function main(): Promise<OpenAI.Beta.Assistants.Assistant> {
   
   const file = await openai.files.create({
-    file:  fs.createReadStream("output.json"), // Upload JSON string as file content
+    file:  fs.createReadStream(outputPath), // Upload JSON string as file content
     purpose: "assistants",
   });
-
-  // Delete the file after it has been uploaded
-  await fs.promises.unlink("output.json");
 
 
   const myAssistant = await openai.beta.assistants.create({

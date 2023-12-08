@@ -248,11 +248,6 @@
 	{
 		"inputs": [
 			{
-				"internalType": "string",
-				"name": "metadata",
-				"type": "string"
-			},
-			{
 				"internalType": "uint256",
 				"name": "assistantNo",
 				"type": "uint256"

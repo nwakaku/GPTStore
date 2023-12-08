@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Settings2 } from "lucide-react";
 
-const NFT_STORAGE_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDNERkVGNzkyNEI0MzVBYkY3MzEyRUMxNkMwQ2QyMzQxZDhCYjZGQ0QiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTcwMTg3NzQ2OTcwNywibmFtZSI6IkdQVFN0b3JlIn0.zngtlyyskIZxbxqVUiwK5W0WX4SFzVWVZeY1GUc_Yzw'
+const NFT_STORAGE_TOKEN = process.env.NEXT_PUBLIC_NFT_STORAGE_TOKEN
 const client = new NFTStorage({ token: NFT_STORAGE_TOKEN })
 
 
@@ -31,6 +31,8 @@ const GPTForm = () => {
     assistantID: '',
   });
 
+  const [formLoading, setFormLoading] = useState(false);
+
   const handleChange = (e) => {
     const { name, value, files } = e.target;
   
@@ -43,26 +45,36 @@ const GPTForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+    setFormLoading(true);
 
-
-    // Assuming your server is running on http://localhost:5000
-    const response = await fetch(`http://localhost:5000/crawl?url=${formData.url}&match=${formData.match}&maxPagesToCrawl=${formData.maxPagesToCrawl}`, {
-      method: 'POST',
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-    );
-
-
-    if (!response.ok) {
-      throw new Error("Failed to submit form");
-    }
-
-    const data3 = await response.json();
-    //NFTStorage
     try {
+      // Crawl request
+      const crawlResponse = await fetch(`http://localhost:5000/crawl?url=${formData.url}&match=${formData.match}&maxPagesToCrawl=${formData.maxPagesToCrawl}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!crawlResponse.ok) {
+        throw new Error('Failed to crawl');
+      }
+
+      // Create Assistants request
+      const assistResponse = await fetch(`http://localhost:5000/createAssistants`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!assistResponse.ok) {
+        throw new Error('Failed to create assistant');
+      }
+
+      const assist_id = await assistResponse.json();
+
+      // NFTStorage
       const metadata = await client.store({
         name: formData.name,
         url: formData.url,
@@ -71,20 +83,28 @@ const GPTForm = () => {
         description: formData.description,
         maxPagesToCrawl: formData.maxPagesToCrawl,
         priceHour: formData.priceHour,
-        assistantID: data3.id
-      })
-      console.log(metadata);
+        assistantID: assist_id.id,
+      });
+
+      console.log('NFTStorage metadata:', metadata);
+
+      // Smart contract write
+      const { hash } = await writeContract({
+        address: contractAddress,
+        abi: contractAbi,
+        functionName: 'setAssistants',
+        args: [metadata.url, formData.priceHour],
+      });
+
+      console.log('Smart contract hash:', hash);
+
     } catch (error) {
-      console.log(error);
+      console.error('Form submission error:', error);
+      // Handle the error, e.g., show an error message to the user
+    } finally {
+      setFormLoading(false);
     }
-    
-    const { hash } = await writeContract({
-      address: contractAddress,
-      abi: contractAbi,
-      functionName: 'setAssistants',
-      args: [metadata.url, formData.priceHour],
-    })
-   }
+  };
 
   return (
     <form onSubmit={handleSubmit} className="">
@@ -216,9 +236,7 @@ const GPTForm = () => {
                 <button
                   type="submit"
                   className="bg-violet-500 hover:bg-violet-600 text-white font-bold py-2 px-4 rounded-md"
-                >
-                  Create Assistant
-                </button>
+                disabled={formLoading}>{formLoading ? 'Loading...' : 'Create Assistants'}</button>
               </div>
             </CardFooter>
         </Card>

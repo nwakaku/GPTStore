@@ -10,30 +10,15 @@ const Question = () => {
 
   const URI = searchParams.get('uri');
 
-  const {name, image, match, description ,priceHour, assistantID} = useFetchData(URI);
+  const { name, image, match, description, priceHour, assistantID } = useFetchData(URI);
+  
+  console.log(name, image, match, description, priceHour, assistantID);
 
 
   const [formData, setFormData] = useState({
     question: "",
   });
   const [answer, setAnswer] = useState("");
-  const [gptInfo, setGptInfo] = useState({});
-
-  // useEffect(() => {
-  //   console.log("router.query:", router.query);
-  //   if (
-  //     router.query &&
-  //     router.query.name &&
-  //     router.query.image &&
-  //     router.query.description
-  //   ) {
-  //     setGptInfo({
-  //       name: router.query.name,
-  //       image: router.query.image,
-  //       description: router.query.description,
-  //     });
-  //   }
-  // }, [router.query]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -71,8 +56,7 @@ const Question = () => {
       const data3 = await response.json();
 
       // Set to state then continue
-      setAnswer(data3.content[0].text.value);
-      console.log(data3);
+      setAnswer(data3);
       console.log("Form submitted successfully");
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -155,7 +139,7 @@ const Question = () => {
 
         <Separator className="bg-slate-400" />
 
-        <div className="rounded-lg mx-3 mt-5 bg-black font-inter text-sm font-semibold py-6 px-5">
+        <div className="rounded-lg mx-3 mt-5 bg-black text-right font-inter text-sm font-semibold py-6 px-5">
           {formData.question}
         </div>
 
@@ -163,7 +147,7 @@ const Question = () => {
           {answer && (
             <div className="flex items-center space-x-3 rtl:space-x-reverse">
               <img
-                src={gptInfo.image || "/placeholder-image.png"}
+                src={`https://ipfs.io/ipfs/${image}`}
                 className="h-8"
                 alt="God help Us"
               />
@@ -185,7 +169,7 @@ const Question = () => {
           {/* Add your icon button component here */}
           <Button
             className="rounded-md bg-violet-800 hover:bg-violet-950"
-            onSubmit={handleSubmit}
+            onClick={handleSubmit}
             type="submit"
           >
             Send

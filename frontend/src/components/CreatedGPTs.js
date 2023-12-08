@@ -23,8 +23,6 @@ import { useFetchData } from "./hooks/useFetchData";
 const GPTCard = ({ item, index }) => {
   const { URI, assistantNo, payment, timeRequested, user } = item;
   
-  console.log(URI, assistantNo, payment, timeRequested, user);
-
   const cardData = useFetchData(URI);
 
 
@@ -50,7 +48,7 @@ const GPTCard = ({ item, index }) => {
             {cardData.name}
           </CardTitle>
           <CardTitle className="text-center text-[#FFD700] text-lg font-semibold ">
-            {cardData.priceHour} P/hr
+            ${cardData.priceHour} P/hr
           </CardTitle>
         </div>
 
@@ -98,16 +96,6 @@ const CreatedGPTs = () => {
 
   }, []);
 
-  const [isDialogOpen, setDialogOpen] = useState(false);
-
-  const handleOpen = () => {
-    setDialogOpen(true);
-  };
-
-  const handleCloseDialog = () => {
-    setDialogOpen(false);
-  };
-
   return (
     <>
       <div className="my-5 mx-32">
@@ -121,11 +109,6 @@ const CreatedGPTs = () => {
         </div>
       </div>
 
-      <Dialog open={isDialogOpen} onOpenChange={handleCloseDialog}>
-        <DialogContent className="sm:max-w-[425px]">
-          {/* <GPTForm /> */}
-        </DialogContent>
-      </Dialog>
     </>
   );
 };

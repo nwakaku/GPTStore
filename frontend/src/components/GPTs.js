@@ -32,9 +32,7 @@ const SuccessfulRented = () => (
 
 const GPTCard = ({ item, onRentSuccess, index }) => {
   const { contractAbi, contractAddress, contract } = useContract();
-
   const { assistantID, owner, pricePerHour } = item;
-  console.log(assistantID, owner, pricePerHour, index);
 
   const cardData = useFetchData(assistantID);
 
@@ -46,24 +44,28 @@ const GPTCard = ({ item, onRentSuccess, index }) => {
   };
 
   const handleRentClick = async () => {
-  try {
-    // Assuming writeContract is the correct function for sending transactions
-    await writeContract({
-      address: contractAddress,
-      abi: contractAbi,
-      functionName: 'rent',
-      value: parseEther(price), // You may need to adjust this depending on your contract requirements
-      args: ["metadata", index + 1]
-    });
+    try {
+      // Assuming writeContract is the correct function for sending transactions
+      const { hash } = await writeContract({
+        address: contractAddress,
+        abi: contractAbi,
+        functionName: 'rent',
+        value: parseEther(price), // You may need to adjust this depending on your contract requirements
+        args: [index + 1],
+      });
 
-    // Transaction was successful
-    setIsRented(true);
-    onRentSuccess();
-  } catch (error) {
-    console.error('Error sending rent transaction:', error);
-    // Handle the error appropriately, e.g., show an error message to the user
-  }
-};
+      // Transaction was successful
+      if (hash) {
+        setIsRented(true);
+        onRentSuccess();
+      } else {
+        throw new Error('Transaction failed');
+      }
+    } catch (error) {
+      console.error('Error sending rent transaction:', error);
+      // Handle the error appropriately, e.g., show an error message to the user
+    }
+  };
 
   return (
     <Card className="m-10 w-72 bg-slate-900 rounded-lg border-none">

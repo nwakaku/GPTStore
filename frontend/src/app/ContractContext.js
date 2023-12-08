@@ -15,7 +15,7 @@ export const useContract = () => useContext(ContractContext);
 // Context provider component
 export const ContractProvider = ({ children }) => {
   const contractAbi = contractStuff;
-  const contractAddress = "0xC6714FE33DB4b4Afe7192DD3A8C68a9275324DEA";
+  const contractAddress = "0x547C2F4d5153c17a98747628C1087C52f6322dFF";
   const walletClient = getWalletClient();
 
   // Create the contract instance

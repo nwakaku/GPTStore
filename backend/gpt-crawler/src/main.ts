@@ -55,14 +55,33 @@ app.post('/crawl', async (req, res) => {
 
     // Start the crawling process
     await crawl(config);
-    await write(config);
-    const jsonFiles = await main();
+    const jsonFiles = await write(config);
     res.status(200).json( jsonFiles );
   } catch (error) {
     console.error(error);
     res.status(500).send('Error during crawling');
   }
 });
+
+// Define a route to start crawling with a GET request
+app.post('/createAssistants', async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  
+  try {
+    const { url } = req.query; // Assuming the data is sent in the request body
+    // Start the Open AI Run process
+    const jsonFiles = await main();
+    res.status(200).json(jsonFiles);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error during crawling');
+  }
+});
+
+
+
 
 // Define a route to start crawling with a POST request
 app.post('/question', async (req, res) => {
@@ -73,7 +92,7 @@ app.post('/question', async (req, res) => {
 try {
   const { ask, assistantId } = req.query; // Assuming the data is sent in the request body
 
-  // Start the crawling process
+  // Start the Open AI Run process
   const jsonFiles = await answer(ask as string, assistantId as string);
   res.status(200).json( jsonFiles );
 } catch (error) {

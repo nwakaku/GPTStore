@@ -1,13 +1,13 @@
 import fs from "fs";
 import OpenAI from "openai";
-
-const openAIApiKey = "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";
-// const assistantId = "asst_NCuD339x7Ufga3obEAkH5NzL";
+import 'dotenv/config';
 
 
 const openai = new OpenAI({
-  apiKey: openAIApiKey
+  apiKey: "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"
 });
+
+let textValue: string
 
 
 export async function answer(userQuestion : string, assistantId: string) {
@@ -49,7 +49,8 @@ export async function answer(userQuestion : string, assistantId: string) {
     }
 
     // Get the last assistant message from the messages array
-    const messages = await openai.beta.threads.messages.list(thread.id);
+  const messages = await openai.beta.threads.messages.list(thread.id);
+  
 
     // Find the last message for the current run
     const lastMessageForRun = messages.data
@@ -61,15 +62,20 @@ export async function answer(userQuestion : string, assistantId: string) {
 
       // If an assistant message is found, console.log() it
       if (lastMessageForRun) {
-        console.log(`${lastMessageForRun.content}`);
+        const contentArray = lastMessageForRun.content;
+
+  contentArray.forEach((element) => {
+    if ('text' in element) {
+       textValue = element.text.value;
+    }
+  });
       } else if (
         !["failed", "cancelled", "expired"].includes(runStatus.status)
       ) {
         console.log("No response received from the assistant.");
       }
 
-    const theMessage = lastMessageForRun ? lastMessageForRun.content : "err";
-
+  const theMessage = lastMessageForRun ? textValue : "err";
 
   return theMessage
 }

@@ -131,4 +131,5 @@ export async function write(config: Config) {
   const outputFilePath = join(scriptDir, config.outputFileName);
 
   await writeFile(outputFilePath, JSON.stringify(results, null, 2));
+  return results;
 }
