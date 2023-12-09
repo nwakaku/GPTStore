@@ -1,10 +1,11 @@
 import fs from "fs";
 import OpenAI from "openai";
-import 'dotenv/config';
+
+require('dotenv').config()
 
 
 const openai = new OpenAI({
-  apiKey: "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"
+  apiKey: process.env.OPENAI_APIKEY
 });
 
 let textValue: string

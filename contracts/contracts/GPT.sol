@@ -160,7 +160,7 @@ contract GPTStore is IERC4907, ERC721URIStorage,  ReentrancyGuard {
 
     function rent(uint256 assistantNo) external payable nonReentrant {
         // Check if the user has already rented this NFT
-        require( userOf(assistantNo) != msg.sender, "You have already rented this NFT");
+        require(hasRented[assistantNo][msg.sender], "You have already rented this NFT");
         require(assistantsGroups[assistantNo].pricePerHour > 0, "Assistant template not found");
         cleanUpOldRentals();
         uint256 timeRequested = msg.value * 3600 / (assistantsGroups[assistantNo].pricePerHour);
@@ -253,38 +253,14 @@ contract GPTStore is IERC4907, ERC721URIStorage,  ReentrancyGuard {
     }
 
 
-    function cleanUpOldRentals() public {
+    function cleanUpOldRentals() public  {
         for (uint256 tokenId = 1; tokenId < nftId; tokenId++) {
             if (userOf(tokenId) != address(0) && userExpires(tokenId) < block.timestamp) {
-                // NFT has expired, remove it from userRentedAssistants
-                removeRentedAssistantFromUser(tokenId);
-
-                // Burn the NFT
+                // NFT has expired, burn it
                 _burn(tokenId);
             }
         }
     }
-
-    function removeRentedAssistantFromUser(uint256 tokenId) internal {
-        address user = userOf(tokenId);
-        uint256[] storage rentedIds = userRentedAssistants[user];
-
-        // Find the index of the tokenId in the rentedIds array
-        uint256 indexToDelete;
-        for (uint256 i = 0; i < rentedIds.length; i++) {
-            if (rentedIds[i] == tokenId) {
-                indexToDelete = i;
-                break;
-            }
-        }
-
-        // If the tokenId was found in the rentedIds array, remove it using .pop()
-        if (indexToDelete < rentedIds.length - 1) {
-            rentedIds[indexToDelete] = rentedIds[rentedIds.length - 1];
-        }
-        rentedIds.pop();
-    }
-
 
 
     /// @dev See {IERC165-supportsInterface}.

@@ -6,21 +6,72 @@ import { useSearchParams } from "next/navigation";
 import { useFetchData } from "./hooks/useFetchData";
 import { LucideBadgeX, TimerReset } from "lucide-react";
 import Timer from "./Timer";
+import { useRouter } from "next/router";
+import { readContract, writeContract  } from '@wagmi/core'
+import { useContract } from "@/app/ContractContext";
+
 
 const Question = () => {
   const searchParams = useSearchParams();
 
   const URI = searchParams.get("uri");
+  const TokenId = searchParams.get("assistNo");
 
-  const { name, image, match, description, priceHour, assistantID } =
-    useFetchData(URI);
 
-  console.log(name, image, match, description, priceHour, assistantID);
+  const { name, image, match, description, priceHour, assistantID } = useFetchData(URI);
+  const { contractAbi, contractAddress, contract } = useContract();
+
 
   const [formData, setFormData] = useState({
     question: "",
   });
   const [answer, setAnswer] = useState("");
+
+  const StopRentalClick = async () => {
+    try {
+      // Assuming writeContract is the correct function for sending transactions
+      const { hash } = await writeContract({
+        address: contractAddress,
+        abi: contractAbi,
+        functionName: 'stopRental',
+        args: [TokenId],
+      });
+
+      // Transaction was successful
+      if (hash) {
+        const router = useRouter();
+        router.push("/dashboard");
+      } else {
+        throw new Error('Transaction failed');
+      }
+    } catch (error) {
+      console.error('Error sending rent transaction:', error);
+      // Handle the error appropriately, e.g., show an error message to the user
+    }
+  };
+
+  const extendRentalClick = async () => {
+    try {
+      // Assuming writeContract is the correct function for sending transactions
+      const { hash } = await writeContract({
+        address: contractAddress,
+        abi: contractAbi,
+        functionName: 'extendRental',
+        value: parseEther(price), // You may need to adjust this depending on your contract requirements
+        args: [TokenId],
+      });
+
+      // Transaction was successful
+      if (hash) {
+        onRentSuccess();
+      } else {
+        throw new Error('Transaction failed');
+      }
+    } catch (error) {
+      console.error('Error sending rent transaction:', error);
+      // Handle the error appropriately, e.g., show an error message to the user
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -138,7 +189,7 @@ const Question = () => {
             variant="outline"
             className="cursor-pointer bg-green-600 mr-2 hover:bg-green-800 hover:text-white text-white font-semibold text-md p-3 rounded-lg "
             onClick={
-              () => handleClick()
+              () => extendRentalClick()
               // Add your logic here for Extend rent
             }
           >
@@ -149,7 +200,7 @@ const Question = () => {
             variant="outline"
             className="cursor-pointer ml-2 bg-red-600 hover:bg-red-800 hover:text-white text-white font-semibold text-md p-3 rounded-lg "
             onClick={
-              () => handleClick()
+              () => StopRentalClick()
               // Add your logic here for Cancel rent
             }
           >

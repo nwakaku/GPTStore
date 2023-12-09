@@ -83,7 +83,7 @@ const GPTForm = () => {
         description: formData.description,
         maxPagesToCrawl: formData.maxPagesToCrawl,
         priceHour: formData.priceHour,
-        assistantID: assist_id.id,
+        assistantID: "assist_id.id",
       });
 
       console.log('NFTStorage metadata:', metadata);

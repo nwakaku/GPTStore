@@ -20,19 +20,23 @@ import { readContract, getAccount } from "@wagmi/core";
 import { useFetchData } from "./hooks/useFetchData";
 import { useRouter } from 'next/navigation';
 import Timer from "./Timer";
+import { parseEther } from 'viem'
 
 
 const GPTCard = ({ item, index }) => {
   const { URI, assistantNo, payment, timeRequested, user } = item;
 
   const cardData = useFetchData(URI);
+  const regularNumber = Number(assistantNo);
+
+  // Assume you have a BigNumber from Solidity
 
   return (
     <Card className="m-10 w-72 bg-slate-900 rounded-lg border-none">
       <CardHeader className="bg-slate-700 rounded-lg m-4 flex items-center justify-center text-center">
         {timeRequested && (
-          <div className="absolute top-2 right-2 bg-black text-white font-bold text-sm p-1 rounded-lg">
-            expires in: <Timer time={timeRequested}/>
+          <div className="relative top-0 left-20 bg-black text-white font-bold text-sm p-1 rounded-lg">
+            expires in: 90sec
           </div>
         )}
 
@@ -58,7 +62,7 @@ const GPTCard = ({ item, index }) => {
           <Link
             href={{
               pathname: "/question",
-              query: { uri: item.URI },
+              query: { uri: item.URI, assistNo: regularNumber },
             }}
           >
             <button className="bg-violet-600 hover:bg-violet-800 text-white text-md font-semibold rounded-lg py-2 px-8">
@@ -113,20 +117,6 @@ const CreatedGPTs = () => {
                 alt={"empty"}
                 className="w-80 h-80 object-cover rounded-md mb-6"
               />
-              {/* <div className="flex space-x-4 mt-4">
-                <p
-                  className="text-lg text-gray-500 cursor-pointer"
-                  onClick={() => router.push("/creator")}
-                >
-                  Create your own GPT
-                </p>
-                <p
-                  className="text-lg text-gray-500 cursor-pointer"
-                  onClick={() => router.push("/marketplace")}
-                >
-                  Visit our marketplace to rent a GPT
-                </p>
-              </div> */}
             </div>
           )}
         </div>

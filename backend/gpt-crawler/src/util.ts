@@ -2,14 +2,16 @@ import fs from "fs";
 import OpenAI from "openai";
 import { fileURLToPath } from 'url';
 import path, { dirname } from 'path';
-import 'dotenv/config';
+
+require('dotenv').config()
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 
 const openai = new OpenAI({
-  apiKey: "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"
+  apiKey: process.env.OPENAI_APIKEY
 });
 
 const outputPath = path.resolve(__dirname, 'output.json');

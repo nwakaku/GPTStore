@@ -8,6 +8,7 @@ import "./IERC4907.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
 
+
 contract GPTStore is IERC4907, ERC721URIStorage,  ReentrancyGuard {
 
     AggregatorV3Interface internal dataFeed;
@@ -22,11 +23,9 @@ contract GPTStore is IERC4907, ERC721URIStorage,  ReentrancyGuard {
     struct UserInfo 
     {
         address user;   // address of user role
-        string URI;     // the URI of rented Assistant
         uint64 expires; // unix timestamp, user expires
         uint256 payment;
         uint256 assistantNo;
-        uint256 timeRequested;
     }
 
     uint256 private nftId = 1;
@@ -66,12 +65,12 @@ contract GPTStore is IERC4907, ERC721URIStorage,  ReentrancyGuard {
         int etherPriceInUSD = getLatestPrice();
 
         // Calculate the pricePerHour in dollars
-        uint256 pricePerHourInUSD = (priceHour * uint(etherPriceInUSD));
+        uint256 pricePerHourInUSD = priceHour * uint(etherPriceInUSD);
 
 
+        assistNo++;
         assistantsGroups[assistNo] = Assistant(assistantId, pricePerHourInUSD, msg.sender);
         assistantIds.push(assistNo); // Add the assistant ID to the array
-        assistNo++;
     }
 
     /**
@@ -120,7 +119,7 @@ contract GPTStore is IERC4907, ERC721URIStorage,  ReentrancyGuard {
         assistantIds[indexToDelete] = assistantIds[assistantIds.length - 1];
     }
     assistantIds.pop();
-    }
+}
 
 
 
@@ -135,7 +134,7 @@ contract GPTStore is IERC4907, ERC721URIStorage,  ReentrancyGuard {
     
     function setUser(uint256, address, uint64) external pure override {
     revert("cannot change user");
-    }
+  }
 
     /// @notice Get the user address of an NFT
     /// @dev The zero address indicates that there is no user or the user is expired
@@ -158,12 +157,12 @@ contract GPTStore is IERC4907, ERC721URIStorage,  ReentrancyGuard {
         return _userInfo[tokenId].expires;
     }
 
-    function rent(uint256 assistantNo) external payable nonReentrant {
+    function rent(string memory metadata, uint256 assistantNo) external payable nonReentrant {
         // Check if the user has already rented this NFT
-        require( userOf(assistantNo) != msg.sender, "You have already rented this NFT");
+        require(!hasRented[nftId][msg.sender], "You have already rented this NFT");
         require(assistantsGroups[assistantNo].pricePerHour > 0, "Assistant template not found");
         cleanUpOldRentals();
-        uint256 timeRequested = msg.value * 3600 / (assistantsGroups[assistantNo].pricePerHour);
+        uint256 timeRequested = msg.value * 3600 / (assistantsGroups[assistantNo].pricePerHour / 1 ether);
         require(timeRequested >= minRentalTime, "Minimum rental time not met");
         require(timeRequested <= maxRentalTime, "Exceeded maximum rental time");
 
@@ -175,15 +174,13 @@ contract GPTStore is IERC4907, ERC721URIStorage,  ReentrancyGuard {
 
         // Mint the NFT
         _mint(msg.sender, nftId);
-        _setTokenURI(nftId, assistantsGroups[assistantNo].assistantID);
+        _setTokenURI(nftId, metadata);
 
         // Set user information for the rented NFT
         UserInfo storage info = _userInfo[nftId];
-        info.URI = assistantsGroups[assistantNo].assistantID;
         info.user = msg.sender;
         info.expires = uint64(block.timestamp + timeRequested);
         info.assistantNo = assistantNo;
-        info.timeRequested = timeRequested;
         info.payment = msg.value; // Store the actual payment
         emit UpdateUser(nftId, info.user, info.expires);
 
@@ -290,6 +287,7 @@ contract GPTStore is IERC4907, ERC721URIStorage,  ReentrancyGuard {
     /// @dev See {IERC165-supportsInterface}.
     function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
         return interfaceId == type(IERC4907).interfaceId || super.supportsInterface(interfaceId);
-    }   
+    }
 
+   
 }
