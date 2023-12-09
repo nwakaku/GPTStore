@@ -41,13 +41,13 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
 const projectId = 'YOUR_PROJECT_ID';
 
 const { wallets } = getDefaultWallets({
-  appName: 'RainbowKit demo',
+  appName: 'GPTStore',
   projectId,
   chains,
 });
 
 const demoAppInfo = {
-  appName: 'Rainbowkit Demo',
+  appName: 'GPTStore',
 };
 
 const connectors = connectorsForWallets([
