@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
@@ -7,9 +7,8 @@ import { useFetchData } from "./hooks/useFetchData";
 import { LucideBadgeX, TimerReset } from "lucide-react";
 import Timer from "./Timer";
 import { useRouter } from "next/router";
-import { readContract, writeContract  } from '@wagmi/core'
 import { useContract } from "@/app/ContractContext";
-
+import { useENS } from "./Search"; // Import useENS from your Search component
 
 const Question = () => {
   const searchParams = useSearchParams();
@@ -17,10 +16,10 @@ const Question = () => {
   const URI = searchParams.get("uri");
   const TokenId = searchParams.get("assistNo");
 
-
-  const { name, image, match, description, priceHour, assistantID } = useFetchData(URI);
+  const { name, image, match, description, priceHour, assistantID } =
+    useFetchData(URI);
   const { contractAbi, contractAddress, contract } = useContract();
-
+  const { names, image: ensImage, resolveENS, resetENS } = useENS(); // Use the useENS hook
 
   const [formData, setFormData] = useState({
     question: "",
@@ -33,7 +32,7 @@ const Question = () => {
       const { hash } = await writeContract({
         address: contractAddress,
         abi: contractAbi,
-        functionName: 'stopRental',
+        functionName: "stopRental",
         args: [TokenId],
       });
 
@@ -42,11 +41,10 @@ const Question = () => {
         const router = useRouter();
         router.push("/dashboard");
       } else {
-        throw new Error('Transaction failed');
+        throw new Error("Transaction failed");
       }
     } catch (error) {
-      console.error('Error sending rent transaction:', error);
-      // Handle the error appropriately, e.g., show an error message to the user
+      console.error("Error sending rent transaction:", error);
     }
   };
 
@@ -56,7 +54,7 @@ const Question = () => {
       const { hash } = await writeContract({
         address: contractAddress,
         abi: contractAbi,
-        functionName: 'extendRental',
+        functionName: "extendRental",
         value: parseEther(price), // You may need to adjust this depending on your contract requirements
         args: [TokenId],
       });
@@ -65,10 +63,10 @@ const Question = () => {
       if (hash) {
         onRentSuccess();
       } else {
-        throw new Error('Transaction failed');
+        throw new Error("Transaction failed");
       }
     } catch (error) {
-      console.error('Error sending rent transaction:', error);
+      console.error("Error sending rent transaction:", error);
       // Handle the error appropriately, e.g., show an error message to the user
     }
   };
@@ -79,6 +77,7 @@ const Question = () => {
       ...prevData,
       [name]: value,
     }));
+    resetENS();
   };
 
   const handleExampleClick = (exampleQuestion) => {
@@ -91,26 +90,28 @@ const Question = () => {
     e.preventDefault();
 
     try {
-      // Assuming your server is running on http://localhost:5000
-      const response = await fetch(
-        `http://localhost:5000/question?ask=${formData.question}&assistantId=${assistantID}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+      if (/^0x[a-fA-F0-9]{40}$/.test(formData.question)) {
+        await resolveENS(formData.question);
+      } else {
+        const response = await fetch(
+          `http://localhost:5000/question?ask=${formData.question}&assistantId=${assistantID}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to submit form");
         }
-      );
 
-      if (!response.ok) {
-        throw new Error("Failed to submit form");
+        const data3 = await response.json();
+
+        setAnswer(data3);
+        console.log("Form submitted successfully");
       }
-
-      const data3 = await response.json();
-
-      // Set to state then continue
-      setAnswer(data3);
-      console.log("Form submitted successfully");
     } catch (error) {
       console.error("Error submitting form:", error);
     }
@@ -133,7 +134,7 @@ const Question = () => {
         </div>
         <div className="text-center">
           <p className="text-1xl font-bold text-sm mt-5 ">Example questions</p>
-          
+
           <div
             className="cursor-pointer bg-black text-white font-semibold text-sm p-2 rounded-lg mt-5"
             onClick={() =>
@@ -188,10 +189,7 @@ const Question = () => {
             size="lg"
             variant="outline"
             className="cursor-pointer bg-green-600 mr-2 hover:bg-green-800 hover:text-white text-white font-semibold text-md p-3 rounded-lg "
-            onClick={
-              () => extendRentalClick()
-              // Add your logic here for Extend rent
-            }
+            onClick={extendRentalClick}
           >
             <TimerReset className="h-5 w-5" /> Extend rent
           </Button>
@@ -199,10 +197,7 @@ const Question = () => {
             size="lg"
             variant="outline"
             className="cursor-pointer ml-2 bg-red-600 hover:bg-red-800 hover:text-white text-white font-semibold text-md p-3 rounded-lg "
-            onClick={
-              () => StopRentalClick()
-              // Add your logic here for Cancel rent
-            }
+            onClick={StopRentalClick}
           >
             <LucideBadgeX className="h-5 w-5" /> Cancel rent
           </Button>
@@ -232,7 +227,7 @@ const Question = () => {
           {formData.question}
         </div>
 
-        <div className="rounded-lg m-3 bg-black overflow-y-auto h-72 max-h-600 p-8 font-inter text-sm font-semibold leading-6 break-words whitespace-pre-wrap">
+        <div className="rounded-lg m-3 bg-black overflow-y-auto h-80 max-h-600 p-8 font-inter text-sm font-semibold leading-6 break-words whitespace-pre-wrap">
           {answer && (
             <div className="flex items-center space-x-3 rtl:space-x-reverse">
               <img
@@ -243,9 +238,25 @@ const Question = () => {
               <span>{answer}</span>
             </div>
           )}
+          {names && (
+            <div className="mt-10 text-center">
+              <div className="w-28 h-30 mt-2 mx-auto">
+                {ensImage && (
+                  <img
+                    src={ensImage}
+                    alt="Avatar"
+                    className="w-full h-full rounded-full"
+                  />
+                )}
+              </div>
+              <p className="text-slate-200 mt-5 font-semibold">
+                Here's the ENS name tied to the address: {names}
+              </p>
+            </div>
+          )}
         </div>
 
-        <div className="mt-20 mx-auto flex w-full max-w-2xl items-center space-x-2 justify-center">
+        <div className="mt-20 mx-auto flex w-full max-w-4xl items-center space-x-2 justify-center">
           <Input
             type="text"
             name="question"
@@ -255,7 +266,6 @@ const Question = () => {
             placeholder="Ask me anything..."
             required
           />
-          {/* Add your icon button component here */}
           <Button
             className="rounded-md bg-violet-800 hover:bg-violet-950"
             onClick={handleSubmit}
