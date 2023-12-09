@@ -19,6 +19,7 @@ import { useContract } from "@/app/ContractContext";
 import { readContract, getAccount } from "@wagmi/core";
 import { useFetchData } from "./hooks/useFetchData";
 import { useRouter } from 'next/navigation';
+import Timer from "./Timer";
 
 
 const GPTCard = ({ item, index }) => {
@@ -31,7 +32,7 @@ const GPTCard = ({ item, index }) => {
       <CardHeader className="bg-slate-700 rounded-lg m-4 flex items-center justify-center text-center">
         {timeRequested && (
           <div className="absolute top-2 right-2 bg-black text-white font-bold text-sm p-1 rounded-lg">
-            expires in: {timeRequested}
+            expires in: <Timer time={timeRequested}/>
           </div>
         )}
 

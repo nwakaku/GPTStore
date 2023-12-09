@@ -4,16 +4,18 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useSearchParams } from "next/navigation";
 import { useFetchData } from "./hooks/useFetchData";
+import { LucideBadgeX, TimerReset } from "lucide-react";
+import Timer from "./Timer";
 
 const Question = () => {
   const searchParams = useSearchParams();
 
-  const URI = searchParams.get('uri');
+  const URI = searchParams.get("uri");
 
-  const { name, image, match, description, priceHour, assistantID } = useFetchData(URI);
-  
+  const { name, image, match, description, priceHour, assistantID } =
+    useFetchData(URI);
+
   console.log(name, image, match, description, priceHour, assistantID);
-
 
   const [formData, setFormData] = useState({
     question: "",
@@ -80,43 +82,79 @@ const Question = () => {
         </div>
         <div className="text-center">
           <p className="text-1xl font-bold text-sm mt-5 ">Example questions</p>
-          {/* Make example questions clickable */}
+          
           <div
             className="cursor-pointer bg-black text-white font-semibold text-sm p-2 rounded-lg mt-5"
             onClick={() =>
               handleExampleClick(
-                "How to connect langchain to search engines with serpapi?"
+                "How to integrate Chainlink VRF (Verifiable Random Function) in my smart contract?"
               )
             }
           >
-            How to connect langchain to search engines with serpapi?
-          </div>
-          <div
-            className="cursor-pointer bg-black text-white font-semibold text-sm p-2 rounded-lg mt-5"
-            onClick={() =>
-              handleExampleClick("How do I use GPT and wolframAlpha?")
-            }
-          >
-            How do I use GPT and wolframAlpha?
-          </div>
-          <div
-            className="cursor-pointer bg-black text-white font-semibold text-sm p-2 rounded-lg mt-5"
-            onClick={() =>
-              handleExampleClick("What is AgentExecutor and sequential chain?")
-            }
-          >
-            What is AgentExecutor and sequential chain?
+            How to integrate Chainlink VRF in my smart contract?
           </div>
           <div
             className="cursor-pointer bg-black text-white font-semibold text-sm p-2 rounded-lg mt-5"
             onClick={() =>
               handleExampleClick(
-                "How to connect langchain to search engines with serpapi?"
+                "What are the key features and advantages of using Avalanche blockchain?"
               )
             }
           >
-            How to connect langchain to search engines with serpapi?
+            Key features and advantages of Avalanche blockchain?
           </div>
+          <div
+            className="cursor-pointer bg-black text-white font-semibold text-sm p-2 rounded-lg mt-5"
+            onClick={() =>
+              handleExampleClick(
+                "How to deploy a smart contract on the Polygon (Matic) network?"
+              )
+            }
+          >
+            How to deploy a smart contract on the Polygon network?
+          </div>
+          <div
+            className="cursor-pointer bg-black text-white font-semibold text-sm p-2 rounded-lg mt-5"
+            onClick={() =>
+              handleExampleClick(
+                "I'm new to chainlink CCIP, how do i get started building with it?"
+              )
+            }
+          >
+            I'm new to chainlink CCIP, how do i get started building with it?
+          </div>
+        </div>
+
+        <div className="mt-14 ml-2 flex items-center text-slate-200 font-bold text-1xl p-4 rounded-lg">
+          Rented time:{" "}
+          <span className="ml-2">
+            <Timer time={10000} />
+          </span>
+        </div>
+
+        <div className="flex flex-row items-center justify-evenly">
+          <Button
+            size="lg"
+            variant="outline"
+            className="cursor-pointer bg-green-600 mr-2 hover:bg-green-800 hover:text-white text-white font-semibold text-md p-3 rounded-lg "
+            onClick={
+              () => handleClick()
+              // Add your logic here for Extend rent
+            }
+          >
+            <TimerReset className="h-5 w-5" /> Extend rent
+          </Button>
+          <Button
+            size="lg"
+            variant="outline"
+            className="cursor-pointer ml-2 bg-red-600 hover:bg-red-800 hover:text-white text-white font-semibold text-md p-3 rounded-lg "
+            onClick={
+              () => handleClick()
+              // Add your logic here for Cancel rent
+            }
+          >
+            <LucideBadgeX className="h-5 w-5" /> Cancel rent
+          </Button>
         </div>
       </div>
 
