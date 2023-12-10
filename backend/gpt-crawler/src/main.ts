@@ -93,6 +93,7 @@ try {
   const { ask, assistantId } = req.query; // Assuming the data is sent in the request body
 
   // Start the Open AI Run process
+  console.log(ask, assistantId);
   const jsonFiles = await answer(ask as string, assistantId as string);
   res.status(200).json( jsonFiles );
 } catch (error) {

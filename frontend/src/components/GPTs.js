@@ -35,6 +35,7 @@ const GPTCard = ({ item, onRentSuccess, index }) => {
   const { contractAbi, contractAddress, contract } = useContract();
   const { assistantID, owner, pricePerHour } = item;
 
+
   const cardData = useFetchData(assistantID);
 
   const [isRented, setIsRented] = useState(false);
@@ -45,6 +46,8 @@ const GPTCard = ({ item, onRentSuccess, index }) => {
   };
 
   const handleRentClick = async () => {
+      console.log(index+1);
+
     try {
       // Assuming writeContract is the correct function for sending transactions
       const { hash } = await writeContract({

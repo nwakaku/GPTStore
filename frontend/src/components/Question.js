@@ -48,6 +48,7 @@ const Question = () => {
     }
   };
 
+
   const extendRentalClick = async () => {
     try {
       // Assuming writeContract is the correct function for sending transactions
@@ -86,6 +87,7 @@ const Question = () => {
     });
   };
 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -93,6 +95,7 @@ const Question = () => {
       if (/^0x[a-fA-F0-9]{40}$/.test(formData.question)) {
         await resolveENS(formData.question);
       } else {
+
         const response = await fetch(
           `http://localhost:5000/question?ask=${formData.question}&assistantId=${assistantID}`,
           {

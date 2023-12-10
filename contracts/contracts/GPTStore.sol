@@ -55,7 +55,7 @@ contract GPTStore is IERC4907, ERC721URIStorage,  ReentrancyGuard {
      ERC721("GPTStore", "GPT")
      {
          dataFeed = AggregatorV3Interface(
-            0x694AA1769357215DE4FAC081bf1f309aDC325306
+            0x5498BB86BC934c8D34FDA08E81D444153d0D06aD
         );
         devAddress = msg.sender;
      }
@@ -63,10 +63,10 @@ contract GPTStore is IERC4907, ERC721URIStorage,  ReentrancyGuard {
     function setAssistants( string memory assistantId, uint256 priceHour ) external {
 
         // Use Chainlink price feed to set the pricePerHour in Dollar equivalent
-        int etherPriceInUSD = getLatestPrice();
+        int PriceInUSD = getLatestPrice();
 
         // Calculate the pricePerHour in dollars
-        uint256 pricePerHourInUSD = (priceHour * uint(etherPriceInUSD));
+        uint256 pricePerHourInUSD = (priceHour * uint(PriceInUSD)) * 1 gwei;
 
 
         assistantsGroups[assistNo] = Assistant(assistantId, pricePerHourInUSD, msg.sender);
@@ -160,6 +160,7 @@ contract GPTStore is IERC4907, ERC721URIStorage,  ReentrancyGuard {
 
     function rent(uint256 assistantNo) external payable nonReentrant {
         // Check if the user has already rented this NFT
+        nftId = assistantNo;
         require( userOf(assistantNo) != msg.sender, "You have already rented this NFT");
         require(assistantsGroups[assistantNo].pricePerHour > 0, "Assistant template not found");
         cleanUpOldRentals();
@@ -190,7 +191,7 @@ contract GPTStore is IERC4907, ERC721URIStorage,  ReentrancyGuard {
         // Store the rented assistant ID for the user
         userRentedAssistants[msg.sender].push(nftId);
 
-        nftId++;
+        // nftId++;
         // Set the hasRented mapping to true for this NFT and user
         hasRented[nftId][msg.sender] = true;
     }
