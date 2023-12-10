@@ -1,4 +1,4 @@
-[# GPTStore - Powered by OpenAI Assistant
+# GPTStore - Powered by OpenAI Assistant
 
 ## Overview
 
@@ -61,4 +61,3 @@ As the AI Dev Advocate Platform evolves, our vision extends beyond the current c
 
 - [GitHub](https://github.com/nwakaku/GPTStore)
 - [Website](https://yourplatformwebsite.com)
-]
