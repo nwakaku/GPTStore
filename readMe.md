@@ -47,9 +47,6 @@ The decision to adopt a rental method over traditional monthly subscriptions is 
 
 The GPTStore has successfully implemented core functionalities, including AI Dev Advocate creation, renting, Chainlink automation, price feed integration for dynamic pricing, and CCIP for cross-chain operations.
 
-## Learning Experience
-
-
 
 ## Future Roadmap
 
@@ -60,3 +57,16 @@ As the AI Dev Advocate Platform evolves, our vision extends beyond the current c
 - [GitHub](https://github.com/nwakaku/GPTStore)
 - [Website](https://yourplatformwebsite.com)
 - [Documentation](https://gptstore.gitbook.io/gptstore-documentation/)
+
+## Running in local
+
+- clone project 
+- Run cd backend 
+- rename .env.example to .env and provide your OPENAI_API key
+- Run npm install
+- Run npm run start
+- Run cd.. && cd frontend
+- rename .env.example to .env and provide your NFT_STORAGE_TOKEN 
+- run npm install
+- run npm run dev
+- open http://localhost:3000 in your browser
